@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventario BDI-II</title>
+<style>
+  :root{
+    --sage:#D9DD92;
+    --plum:#776472;
+    --terracotta:#DB9065;
+    --olive:#646F4B;
+    --moss:#71816D;
+
+    --bg:#FBF8F1;
+    --surface:#FFFFFF;
+    --surface-soft:#F4EFE2;
+    --text:#3B362F;
+    --text-soft:#756E63;
+    --border:#E7E0CE;
+    --accent:var(--terracotta);
+    --accent-strong:#C97A50;
+    --selected-bg:#F4EEDD;
+    --selected-border:var(--olive);
+    --focus:var(--terracotta);
+    --danger:#B5533E;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#221F1B;
+      --surface:#2B2722;
+      --surface-soft:#332E27;
+      --text:#EFE9DC;
+      --text-soft:#B7AE9E;
+      --border:#463F35;
+      --accent:#E39B70;
+      --accent-strong:#EDB08C;
+      --selected-bg:#3A3626;
+      --selected-border:#A7B589;
+      --focus:#E39B70;
+      --danger:#E28572;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#221F1B;
+    --surface:#2B2722;
+    --surface-soft:#332E27;
+    --text:#EFE9DC;
+    --text-soft:#B7AE9E;
+    --border:#463F35;
+    --accent:#E39B70;
+    --accent-strong:#EDB08C;
+    --selected-bg:#3A3626;
+    --selected-border:#A7B589;
+    --focus:#E39B70;
+    --danger:#E28572;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Lustria', Georgia, 'Times New Roman', serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', Georgia, serif;
+    color:var(--plum);
+    text-wrap:balance;
+    margin:0;
+  }
+  :root[data-theme="dark"] h1, :root[data-theme="dark"] h2, :root[data-theme="dark"] h3{ color:var(--accent-strong); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) h1, :root:not([data-theme="light"]) h2, :root:not([data-theme="light"]) h3{ color:var(--accent-strong); } }
+
+  .eyebrow{
+    font-family:'Arsenal', Georgia, serif;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    font-size:.72rem;
+    color:var(--moss);
+    font-weight:700;
+  }
+
+  .wrap{ max-width:700px; margin:0 auto; padding:0 20px 80px; }
+
+  header.hero{
+    background:linear-gradient(135deg, var(--sage) 0%, var(--moss) 100%);
+    padding:48px 20px 40px;
+    margin-bottom:32px;
+  }
+  :root[data-theme="dark"] header.hero, @media (prefers-color-scheme: dark){ }
+  header.hero .wrap{ text-align:center; }
+  header.hero h1{ font-size:clamp(1.6rem, 5vw, 2.3rem); color:#3B362F !important; }
+  header.hero p.sub{
+    font-family:'Arsenal', Georgia, serif;
+    color:#4B4A32;
+    margin-top:10px;
+    font-size:1rem;
+  }
+
+  .intro-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:28px;
+    font-size:.96rem;
+    color:var(--text-soft);
+  }
+  .intro-card strong{ color:var(--text); }
+
+  section.block{ margin-bottom:36px; }
+  .section-title{
+    font-family:'Arsenal', Georgia, serif;
+    font-size:1.05rem;
+    color:var(--plum);
+    border-bottom:2px solid var(--sage);
+    padding-bottom:8px;
+    margin-bottom:20px;
+  }
+  :root[data-theme="dark"] .section-title, @media (prefers-color-scheme: dark){ }
+  .section-title{ }
+
+  .field-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.full{ grid-column:1 / -1; }
+  label.field-label{
+    font-family:'Arsenal', Georgia, serif;
+    font-size:.8rem;
+    color:var(--text-soft);
+  }
+  input[type="text"], input[type="number"], input[type="date"], select{
+    font-family:'Lustria', Georgia, serif;
+    font-size:1rem;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+  }
+  input:focus, select:focus, .opt input:focus-visible + span{
+    outline:2px solid var(--focus);
+    outline-offset:1px;
+  }
+
+  .item-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px 20px 16px;
+    margin-bottom:16px;
+  }
+  .item-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .item-num{
+    flex:none;
+    width:32px; height:32px;
+    border-radius:50%;
+    background:var(--olive);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Arsenal', Georgia, serif;
+    font-size:.85rem;
+    font-weight:700;
+  }
+  .item-title{
+    font-family:'Arsenal', Georgia, serif;
+    font-size:1.02rem;
+    color:var(--text);
+  }
+  .opts{ display:flex; flex-direction:column; gap:8px; }
+  .opt{ display:block; position:relative; }
+  .opt input{ position:absolute; opacity:0; width:1px; height:1px; }
+  .opt span{
+    display:block;
+    padding:10px 14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    font-size:.92rem;
+    cursor:pointer;
+    transition:background .12s ease, border-color .12s ease;
+  }
+  .opt input:checked + span{
+    background:var(--selected-bg);
+    border-color:var(--selected-border);
+    font-weight:600;
+  }
+  .opt:hover span{ border-color:var(--moss); }
+
+  .safety-note{
+    font-size:.82rem;
+    color:var(--text-soft);
+    background:var(--surface-soft);
+    border-left:3px solid var(--terracotta);
+    padding:12px 14px;
+    border-radius:8px;
+    margin:8px 0 32px;
+  }
+
+  .submit-row{ margin-top:8px; }
+  button.submit{
+    width:100%;
+    background:var(--accent);
+    color:#2A2521;
+    border:none;
+    padding:16px 20px;
+    border-radius:12px;
+    font-family:'Arsenal', Georgia, serif;
+    font-size:1.05rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+  }
+  button.submit:hover{ background:var(--accent-strong); }
+  button.submit:active{ transform:scale(.99); }
+  button.submit:disabled{ opacity:.6; cursor:default; }
+
+  a.mail-btn{
+    display:inline-block;
+    text-decoration:none;
+    text-align:center;
+    margin-top:6px;
+  }
+
+  .msg{
+    margin-top:14px;
+    font-size:.88rem;
+    text-align:center;
+  }
+  .msg.error{ color:var(--danger); }
+  .msg.info{ color:var(--text-soft); }
+
+  .thankyou{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:40px 28px;
+    text-align:center;
+  }
+  .thankyou .eyebrow{ display:block; margin-bottom:10px; }
+  .thankyou h2{ font-size:1.5rem; margin-bottom:10px; }
+  .thankyou p{ color:var(--text-soft); }
+
+  footer.foot{
+    text-align:center;
+    font-size:.76rem;
+    color:var(--text-soft);
+    margin-top:40px;
+  }
+
+  [hidden]{ display:none !important; }
+
+  @media (max-width:520px){
+    .field-grid{ grid-template-columns:1fr; }
+    header.hero{ padding:36px 16px 30px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Arsenal:wght@400;700&family=Lustria&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow" style="color:#4B4A32;">Cuestionario clínico</span>
+    <h1>Inventario de Depresión de Beck (BDI&#8209;II)</h1>
+    <p class="sub">Enfoque cognitivo&#8209;conductual · Consulta psicológica virtual</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <form id="bdiForm" method="POST" action="https://formspree.io/f/mjyvwygv">
+    <input type="hidden" name="_subject" value="Nueva respuesta - Inventario BDI-II">
+    <div class="intro-card">
+      Este cuestionario consta de <strong>21 grupos de afirmaciones</strong>. Lee con atención cada uno de ellos y elige, en cada grupo, la opción que mejor describa cómo te has sentido <strong>durante las últimas dos semanas, incluyendo hoy</strong>. Si varias opciones de un mismo grupo te parecen igualmente apropiadas, elige la más alta. Tus respuestas son confidenciales y se envían directamente a tu psicóloga.
+    </div>
+
+    <section class="block">
+      <h2 class="section-title">Datos del paciente</h2>
+      <div class="field-grid">
+        <div class="field full">
+          <label class="field-label" for="p_nombre">Nombre completo *</label>
+          <input type="text" id="p_nombre" name="Nombre" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="p_edad">Edad *</label>
+          <input type="number" id="p_edad" name="Edad" min="0" max="120" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="p_sexo">Sexo *</label>
+          <select id="p_sexo" name="Sexo" required>
+            <option value="" disabled selected>Selecciona</option>
+            <option>Femenino</option>
+            <option>Masculino</option>
+            <option>Prefiero no decir</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="p_civil">Estado civil</label>
+          <input type="text" id="p_civil" name="Estado civil">
+        </div>
+        <div class="field">
+          <label class="field-label" for="p_ocup">Ocupación</label>
+          <input type="text" id="p_ocup" name="Ocupación">
+        </div>
+        <div class="field">
+          <label class="field-label" for="p_edu">Educación</label>
+          <input type="text" id="p_edu" name="Educación">
+        </div>
+        <div class="field">
+          <label class="field-label" for="p_fecha">Fecha *</label>
+          <input type="date" id="p_fecha" name="Fecha" required>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="section-title">Cuestionario</h2>
+      <div id="itemsContainer"></div>
+      <div class="safety-note">
+        Si en este momento sientes que estás en riesgo o necesitas ayuda inmediata, comunícate con la <strong>Línea 106</strong> (línea de salud mental en Colombia) o con los servicios de emergencia (<strong>123</strong>).
+      </div>
+    </section>
+
+    <input type="hidden" name="Puntaje total" id="scoreField">
+
+    <div class="submit-row">
+      <button type="submit" class="submit" id="submitBtn">Enviar respuestas</button>
+      <p class="msg info" id="statusMsg" hidden></p>
+      <p class="msg info">¿Prefieres enviarlo por tu correo? <a id="mailBackup" href="#" target="_blank" rel="noopener">Haz clic aquí</a></p>
+    </div>
+  </form>
+
+  <div class="thankyou" id="thankyou" hidden>
+    <span class="eyebrow">Listo</span>
+    <h2>Gracias por completar el cuestionario</h2>
+    <p>Tus respuestas fueron enviadas. Tu psicóloga las revisará antes de tu próxima sesión.</p>
+  </div>
+
+  <footer class="foot">Formulario privado de uso clínico · Beck Depression Inventory&#8209;II (Beck, Steer &amp; Brown)</footer>
+</div>
+
+<script>
+  // ---- Reemplaza esto por tu endpoint real de Formspree cuando lo tengas ----
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/mjyvwygv";
+  const FALLBACK_EMAIL = "ps.lizbanyarango@gmail.com";
+
+  const items = [
+    {n:1, title:"Tristeza", opts:[
+      [0,"No me siento triste."],
+      [1,"Me siento triste gran parte del tiempo."],
+      [2,"Me siento triste todo el tiempo."],
+      [3,"Me siento tan triste o soy tan infeliz que no puedo soportarlo."]]},
+    {n:2, title:"Pesimismo", opts:[
+      [0,"No estoy desalentado respecto de mi futuro."],
+      [1,"Me siento más desalentado respecto de mi futuro que lo que solía estarlo."],
+      [2,"No espero que las cosas funcionen para mí."],
+      [3,"Siento que no hay esperanza para mi futuro y que sólo puede empeorar."]]},
+    {n:3, title:"Fracaso", opts:[
+      [0,"No me siento como un fracasado."],
+      [1,"He fracasado más de lo que hubiera debido."],
+      [2,"Cuando miro hacia atrás, veo muchos fracasos."],
+      [3,"Siento que como persona soy un fracaso total."]]},
+    {n:4, title:"Pérdida de placer", opts:[
+      [0,"Obtengo tanto placer como siempre por las cosas de las que disfruto."],
+      [1,"No disfruto tanto de las cosas como solía hacerlo."],
+      [2,"Obtengo muy poco placer de las cosas que solía disfrutar."],
+      [3,"No puedo obtener ningún placer de las cosas de las que solía disfrutar."]]},
+    {n:5, title:"Sentimientos de culpa", opts:[
+      [0,"No me siento particularmente culpable."],
+      [1,"Me siento culpable respecto de varias cosas que he hecho o que debería haber hecho."],
+      [2,"Me siento bastante culpable la mayor parte del tiempo."],
+      [3,"Me siento culpable todo el tiempo."]]},
+    {n:6, title:"Sentimientos de castigo", opts:[
+      [0,"No siento que esté siendo castigado."],
+      [1,"Siento que tal vez pueda ser castigado."],
+      [2,"Espero ser castigado."],
+      [3,"Siento que estoy siendo castigado."]]},
+    {n:7, title:"Disconformidad con uno mismo", opts:[
+      [0,"Siento acerca de mí lo mismo que siempre."],
+      [1,"He perdido la confianza en mí mismo."],
+      [2,"Estoy decepcionado conmigo mismo."],
+      [3,"No me gusto a mí mismo."]]},
+    {n:8, title:"Autocrítica", opts:[
+      [0,"No me critico ni me culpo más de lo habitual."],
+      [1,"Estoy más crítico conmigo mismo de lo que solía estarlo."],
+      [2,"Me critico a mí mismo por todos mis errores."],
+      [3,"Me culpo a mí mismo por todo lo malo que sucede."]]},
+    {n:9, title:"Pensamientos o deseos suicidas", opts:[
+      [0,"No tengo ningún pensamiento de matarme."],
+      [1,"He tenido pensamientos de matarme, pero no lo haría."],
+      [2,"Querría matarme."],
+      [3,"Me mataría si tuviera la oportunidad de hacerlo."]]},
+    {n:10, title:"Llanto", opts:[
+      [0,"No lloro más de lo que solía hacerlo."],
+      [1,"Lloro más de lo que solía hacerlo."],
+      [2,"Lloro por cualquier pequeñez."],
+      [3,"Siento ganas de llorar pero no puedo."]]},
+    {n:11, title:"Agitación", opts:[
+      [0,"No estoy más inquieto o tenso que lo habitual."],
+      [1,"Me siento más inquieto o tenso que lo habitual."],
+      [2,"Estoy tan inquieto o agitado que me es difícil quedarme quieto."],
+      [3,"Estoy tan inquieto o agitado que tengo que estar siempre en movimiento o haciendo algo."]]},
+    {n:12, title:"Pérdida de interés", opts:[
+      [0,"No he perdido el interés en otras actividades o personas."],
+      [1,"Estoy menos interesado que antes en otras personas o cosas."],
+      [2,"He perdido casi todo el interés en otras personas o cosas."],
+      [3,"Me es difícil interesarme por algo."]]},
+    {n:13, title:"Indecisión", opts:[
+      [0,"Tomo mis propias decisiones tan bien como siempre."],
+      [1,"Me resulta más difícil que de costumbre tomar decisiones."],
+      [2,"Encuentro mucha más dificultad que antes para tomar decisiones."],
+      [3,"Tengo problemas para tomar cualquier decisión."]]},
+    {n:14, title:"Desvalorización", opts:[
+      [0,"No siento que yo no sea valioso."],
+      [1,"No me considero a mí mismo tan valioso y útil como solía considerarme."],
+      [2,"Me siento menos valioso cuando me comparo con otros."],
+      [3,"Siento que no valgo nada."]]},
+    {n:15, title:"Pérdida de energía", opts:[
+      [0,"Tengo tanta energía como siempre."],
+      [1,"Tengo menos energía que la que solía tener."],
+      [2,"No tengo suficiente energía para hacer demasiado."],
+      [3,"No tengo energía suficiente para hacer nada."]]},
+    {n:16, title:"Cambios en los hábitos de sueño", opts:[
+      [0,"No he experimentado ningún cambio en mis hábitos de sueño."],
+      [1,"1a. Duermo un poco más que lo habitual."],
+      [1,"1b. Duermo un poco menos que lo habitual."],
+      [2,"2a. Duermo mucho más que lo habitual."],
+      [2,"2b. Duermo mucho menos que lo habitual."],
+      [3,"3a. Duermo la mayor parte del día."],
+      [3,"3b. Me despierto 1-2 horas más temprano y no puedo volver a dormirme."]]},
+    {n:17, title:"Irritabilidad", opts:[
+      [0,"No estoy tan irritable que lo habitual."],
+      [1,"Estoy más irritable que lo habitual."],
+      [2,"Estoy mucho más irritable que lo habitual."],
+      [3,"Estoy irritable todo el tiempo."]]},
+    {n:18, title:"Cambios en el apetito", opts:[
+      [0,"No he experimentado ningún cambio en mi apetito."],
+      [1,"1a. Mi apetito es un poco menor que lo habitual."],
+      [1,"1b. Mi apetito es un poco mayor que lo habitual."],
+      [2,"2a. Mi apetito es mucho menor que antes."],
+      [2,"2b. Mi apetito es mucho mayor que lo habitual."],
+      [3,"3a. No tengo apetito en absoluto."],
+      [3,"3b. Quiero comer todo el día."]]},
+    {n:19, title:"Dificultad de concentración", opts:[
+      [0,"Puedo concentrarme tan bien como siempre."],
+      [1,"No puedo concentrarme tan bien como habitualmente."],
+      [2,"Me es difícil mantener la mente en algo por mucho tiempo."],
+      [3,"Encuentro que no puedo concentrarme en nada."]]},
+    {n:20, title:"Cansancio o fatiga", opts:[
+      [0,"No estoy más cansado o fatigado que lo habitual."],
+      [1,"Me fatigo o me canso más fácilmente que lo habitual."],
+      [2,"Estoy demasiado fatigado o cansado para hacer muchas de las cosas que solía hacer."],
+      [3,"Estoy demasiado fatigado o cansado para hacer la mayoría de las cosas que solía hacer."]]},
+    {n:21, title:"Pérdida de interés en el sexo", opts:[
+      [0,"No he notado ningún cambio reciente en mi interés por el sexo."],
+      [1,"Estoy menos interesado en el sexo de lo que solía estarlo."],
+      [2,"Estoy mucho menos interesado en el sexo."],
+      [3,"He perdido completamente el interés en el sexo."]]}
+  ];
+
+  const container = document.getElementById('itemsContainer');
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    const head = document.createElement('div');
+    head.className = 'item-head';
+    head.innerHTML = `<span class="item-num">${item.n}</span><span class="item-title">${item.title}</span>`;
+    card.appendChild(head);
+    const opts = document.createElement('div');
+    opts.className = 'opts';
+    const fieldName = `${String(item.n).padStart(2,'0')}. ${item.title}`;
+    item.opts.forEach((o, i) => {
+      const label = document.createElement('label');
+      label.className = 'opt';
+      const id = `item${item.n}_${i}`;
+      label.innerHTML = `<input type="radio" name="${fieldName}" data-item="${item.n}" data-score="${o[0]}" id="${id}" value="${o[1]}" required><span>${o[1]}</span>`;
+      opts.appendChild(label);
+    });
+    card.appendChild(opts);
+    container.appendChild(card);
+  });
+
+  document.getElementById('p_fecha').value = new Date().toISOString().slice(0,10);
+
+  const form = document.getElementById('bdiForm');
+  const statusMsg = document.getElementById('statusMsg');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function showStatus(text, type){
+    statusMsg.textContent = text;
+    statusMsg.className = 'msg ' + (type || 'info');
+    statusMsg.hidden = false;
+  }
+
+  function computeScore(){
+    let total = 0;
+    items.forEach(item => {
+      const checked = form.querySelector(`input[data-item="${item.n}"]:checked`);
+      if(checked) total += parseInt(checked.dataset.score, 10);
+    });
+    return total;
+  }
+
+  function buildMailto(){
+    const nombre = form.Nombre.value || '(sin nombre)';
+    let lines = [`Nombre: ${nombre}`, `Edad: ${form.Edad.value}`, `Sexo: ${form.Sexo.value}`, `Fecha: ${form.Fecha.value}`];
+    items.forEach(item => {
+      const checked = form.querySelector(`input[data-item="${item.n}"]:checked`);
+      lines.push(`${item.n}. ${item.title}: ${checked ? checked.value : ''}`);
+    });
+    lines.push(`Puntaje total: ${computeScore()}`);
+    const subject = encodeURIComponent(`Respuestas BDI-II - ${nombre}`);
+    const body = encodeURIComponent(lines.join('\n'));
+    return `mailto:${FALLBACK_EMAIL}?subject=${subject}&body=${body}`;
+  }
+
+  const mailBackup = document.getElementById('mailBackup');
+  function refreshMailBackup(){ mailBackup.setAttribute('href', buildMailto()); }
+  form.addEventListener('change', refreshMailBackup);
+  refreshMailBackup();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!form.reportValidity()) return;
+
+    document.getElementById('scoreField').value = computeScore();
+    submitBtn.disabled = true;
+    showStatus('Enviando...', 'info');
+
+    try{
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      });
+      if(!res.ok) throw new Error('bad response');
+      form.hidden = true;
+      document.getElementById('thankyou').hidden = false;
+      window.scrollTo({top:0, behavior:'smooth'});
+    } catch(err){
+      showStatus('No se pudo enviar automáticamente. Usa el enlace de correo de abajo.', 'error');
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

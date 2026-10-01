@@ -1,0 +1,16 @@
+{
+  "images": [
+    {
+      "file": "assets/img/hero-lizbany.webp",
+      "source": "own",
+      "owner": "Lizbany Arango",
+      "notes": "Banner de marca provisto por la clienta (IMAGEN PARA HERO.png), ya incluye su logo y diseño; solo se convirtió a WebP."
+    },
+    {
+      "file": "assets/img/logo-mark.webp",
+      "source": "own",
+      "owner": "Lizbany Arango",
+      "notes": "Isotipo extraído de LOGO ORIGINAL.PNG provisto por la clienta: fondo recortado a transparencia, sin redibujar el trazo."
+    }
+  ]
+}
