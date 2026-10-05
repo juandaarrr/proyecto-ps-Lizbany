@@ -4,7 +4,7 @@ Use this template when dispatching a spec document reviewer subagent.
 
 **Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
 
-**Dispatch after:** `requirements.md` and `design.md` are approved in `specs/<feature>/` (produced by the `specify` skill). Review both files together and also check that every requirement is covered by the design (traceability).
+**Dispatch after:** `requirements.md`, `design.md` and `tasks.md` are approved in `specs/<feature>/` (produced by the `specify` skill). Review the three files together and also check traceability: every requirement is covered by the design, and every acceptance criterion by at least one task.
 
 ```
 Subagent (general-purpose):

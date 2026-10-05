@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation. For architectural work it chains into the `specify` skill (requirements.md -> design.md) and then writing-plans."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation. For architectural work it chains into the `specify` skill (requirements.md -> design.md -> tasks.md), whose approved tasks.md is the implementation plan."
 ---
 
 # Brainstorming Ideas Into Designs
@@ -44,12 +44,12 @@ selected path's prerequisites:
 - Spike: the human partner approves the question and probe.
 - Bounded: the human partner approves the short in-chat design.
 - Architectural: the human partner approves the conversational design,
-  then approves `requirements.md` and `design.md` (both produced by the
-  `specify` skill, each with its own approval), then reviews the written
-  implementation plan and selects its execution method. Conversational
-  design approval only permits invoking `specify`; approval of
-  `requirements.md` only permits writing `design.md`; approval of both
-  documents only permits invoking writing-plans.
+  then approves `requirements.md`, `design.md` and `tasks.md` (all
+  produced by the `specify` skill, each with its own approval).
+  Conversational design approval only permits invoking `specify`;
+  approval of `requirements.md` only permits writing `design.md`;
+  approval of `design.md` only permits writing `tasks.md`; approval of
+  all three documents permits implementing, following `tasks.md`.
 
 A reply approves the stage actually presented. Approval of an idea or
 feature scope does not approve artifacts that do not exist yet. Resume
@@ -84,8 +84,8 @@ override it:
 - **Architectural** — new projects, new subsystems, changes that
   restructure how components fit together or alter interfaces others
   depend on. Follow the full process: questions, approaches, sectioned
-  design, then the `specify` skill (requirements -> design), then the
-  writing-plans skill.
+  design, then the `specify` skill (requirements -> design -> tasks),
+  then implementation following `tasks.md`.
 
 When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
@@ -96,14 +96,14 @@ stop, say so, and step up. Nothing downgrades mid-task.
 Every path ends with your human partner approving the required design
 before implementation. A bounded change may need only two sentences in
 chat. A new todo-list project is architectural and requires the written
-spec and planning handoffs. Scale the artifact to the selected path;
+spec (requirements, design and tasks). Scale the artifact to the selected path;
 complete that path's reviews before implementation.
 
 ## Red Flags
 
 | Thought | Reality |
 |---------|---------|
-| "This is too simple to need a design" | Follow the selected path: a bounded change gets a short chat design; an architectural change gets the written spec and planning handoffs. |
+| "This is too simple to need a design" | Follow the selected path: a bounded change gets a short chat design; an architectural change gets the written spec (requirements, design and tasks). |
 | "I'll call it bounded and skip the spec" | Reaching for a label to skip work IS the doubt — take the heavier path. |
 | "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
 | "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow — it is architectural. |
@@ -136,9 +136,9 @@ your path and complete them in order.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Hand off to `specify`** — invoke the `specify` skill with the agreed understanding and approved design as input (see "Handoff to specify" below). It writes `specs/<feature>/requirements.md`, then `design.md`, each behind its own approval gate
-7. **Spec self-review** — once both documents are approved, quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **Transition to implementation** — invoke writing-plans skill to create implementation plan from the approved `requirements.md` and `design.md`
+6. **Hand off to `specify`** — invoke the `specify` skill with the agreed understanding and approved design as input (see "Handoff to specify" below). It writes `specs/<feature>/requirements.md`, then `design.md`, then `tasks.md`, each behind its own approval gate
+7. **Spec self-review** — once the three documents are approved, quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+8. **Transition to implementation** — implement following the approved `tasks.md`, one task at a time (TDD applies), logging results and decisions in each task's Bitácora
 
 ## Process Flow
 
@@ -156,10 +156,10 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Invoke specify skill\n(requirements -> design)" [shape=box];
+    "Invoke specify skill\n(requirements -> design -> tasks)" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
-    "Both documents approved?" [shape=diamond];
-    "Invoke writing-plans skill" [shape=doublecircle];
+    "All three documents approved?" [shape=diamond];
+    "Implement following tasks.md" [shape=doublecircle];
     "Hidden complexity? Upgrade path" [shape=box];
 
     "Classify: spike / bounded / architectural" -> "Present question + probe (2-3 sentences)" [label="spike"];
@@ -176,18 +176,18 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Invoke specify skill\n(requirements -> design)" [label="yes"];
-    "Invoke specify skill\n(requirements -> design)" -> "Both documents approved?";
-    "Both documents approved?" -> "Invoke specify skill\n(requirements -> design)" [label="changes requested"];
-    "Both documents approved?" -> "Spec self-review\n(fix inline)" [label="approved"];
-    "Spec self-review\n(fix inline)" -> "Invoke writing-plans skill";
+    "User approves design?" -> "Invoke specify skill\n(requirements -> design -> tasks)" [label="yes"];
+    "Invoke specify skill\n(requirements -> design -> tasks)" -> "All three documents approved?";
+    "All three documents approved?" -> "Invoke specify skill\n(requirements -> design -> tasks)" [label="changes requested"];
+    "All three documents approved?" -> "Spec self-review\n(fix inline)" [label="approved"];
+    "Spec self-review\n(fix inline)" -> "Implement following tasks.md";
 }
 ```
 
-**Terminal states are path-bound.** Architectural: the only skills you
-invoke after brainstorming are `specify` and then writing-plans, in that
-order — never frontend-design, mcp-builder, or any other implementation
-skill. Bounded: after
+**Terminal states are path-bound.** Architectural: the only skill you
+invoke after brainstorming is `specify`; once its three documents are
+approved, implementation follows `tasks.md` — never frontend-design,
+mcp-builder, or any other implementation skill chosen on its own. Bounded: after
 approval, implementation proceeds directly through the normal
 development workflow; no plan document. Spike: the terminal state is a
 reported recommendation.
@@ -253,20 +253,20 @@ not write a separate design doc under `docs/superpowers/specs/`.
   `requirements.md`; decisions and discarded alternatives go into
   `design.md`.
 - `specify` owns the approval gates for its documents (requirements first,
-  then design). Do not skip or merge them. Where it is ambiguous, prefer
+  then design, then tasks). Do not skip or merge them. Where it is ambiguous, prefer
   `specs/<feature>/` inside the project folder that holds the feature.
 - Use elements-of-style:writing-clearly-and-concisely skill if available.
-- Commit both documents to git once approved.
+- Commit the three documents to git once approved.
 
 If the user invokes `specify` directly (without brainstorming), `specify`
 works on its own; this handoff only applies when brainstorming comes first.
 
 **Spec Self-Review:**
-After `requirements.md` and `design.md` are both approved, look at them with fresh eyes (the reviewer prompt in `spec-document-reviewer-prompt.md` can be dispatched for this):
+After `requirements.md`, `design.md` and `tasks.md` are all approved, look at them with fresh eyes (the reviewer prompt in `spec-document-reviewer-prompt.md` can be dispatched for this):
 
 1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
 2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
-3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
+3. **Scope check:** Is this focused enough for a single `tasks.md`, or does it need decomposition? Does every acceptance criterion appear in the requirements coverage table?
 4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
 
 Fix any issues inline. No need to re-review — just fix and move on.
@@ -274,14 +274,15 @@ Fix any issues inline. No need to re-review — just fix and move on.
 **User Review Gate:**
 `specify` already gets explicit approval of each document. After the self-review, if you changed anything, tell the user what changed and ask once more before proceeding:
 
-> "Spec ready in `specs/<feature>/` (`requirements.md` and `design.md`). Please confirm it is OK to start writing the implementation plan."
+> "Spec ready in `specs/<feature>/` (`requirements.md`, `design.md` and `tasks.md`). Please confirm it is OK to start implementing task 1."
 
 If they request changes, make them (via `specify`, keeping `design.md` aligned with `requirements.md`) and re-run the self-review. Only proceed once the user approves.
 
 **Implementation:**
 
-- Invoke the writing-plans skill to create a detailed implementation plan from the approved documents
-- Do NOT invoke any other implementation skill. writing-plans is the next step after `specify`.
+- `tasks.md` is the implementation plan. Do not write a separate plan document or invoke writing-plans.
+- Execute the tasks in order, one at a time, with the normal development workflow (TDD applies). Update each task's status and Bitácora as you go, as described in `specify`.
+- Do NOT invoke any other implementation skill on your own initiative; if a task needs one, say so and ask.
 
 ## Visual Companion
 
