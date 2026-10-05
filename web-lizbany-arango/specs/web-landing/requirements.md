@@ -84,7 +84,7 @@ Sitio web estático de una sola página para Ps. Lizbany Arango, psicóloga clí
 
 1. THE SYSTEM SHALL adaptar el diseño a anchos desde 320 px hasta escritorio (puntos de corte en 540, 720, 960 y 1280 px).
 2. WHEN la pantalla tiene menos de 320 px útiles THE SYSTEM SHALL evitar el desplazamiento horizontal.
-3. THE SYSTEM SHALL mantener botones y enlaces con área táctil suficiente en móvil.
+3. WHILE el ancho de pantalla sea menor de 720 px THE SYSTEM SHALL mostrar los botones (`.btn`) con una altura mínima de 44 px y los enlaces de navegación y contacto con un área táctil de al menos 24 × 24 px.
 
 ### Requisito 7: Animaciones y degradación elegante
 
@@ -116,6 +116,11 @@ Sitio web estático de una sola página para Ps. Lizbany Arango, psicóloga clí
 - Sin dependencias de build ni backend; solo GSAP/ScrollTrigger locales y Google Fonts (Fraunces, Work Sans, Lora).
 - Sin recopilación de datos personales ni formularios en el sitio.
 - Compatible con las dos últimas versiones de Chrome, Safari, Firefox y Edge.
+
+## Brechas conocidas (código actual vs. requisitos)
+
+- **Req. 7.4:** hoy los reveals (`opacity`/`transform`) siguen animándose con `prefers-reduced-motion: reduce`; solo se desactivan el scroll suave y el `scroll-cue`. Ver `design.md`, "Riesgos y decisiones pendientes".
+- **Req. 6.3:** pendiente de medir la altura real de `.btn-compact` y de los enlaces de `.nav-links` (hoy con `padding-block: 0.3rem`) en móvil.
 
 ## Fuera de alcance
 

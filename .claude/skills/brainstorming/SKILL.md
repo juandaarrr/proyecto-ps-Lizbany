@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation. For architectural work it chains into the `specify` skill (requirements.md -> design.md) and then writing-plans."
 ---
 
 # Brainstorming Ideas Into Designs
@@ -43,10 +43,13 @@ selected path's prerequisites:
 
 - Spike: the human partner approves the question and probe.
 - Bounded: the human partner approves the short in-chat design.
-- Architectural: the human partner reviews and approves the written spec,
-  then reviews the written implementation plan and selects its execution
-  method. Conversational design approval only permits writing the spec;
-  written-spec approval only permits invoking writing-plans.
+- Architectural: the human partner approves the conversational design,
+  then approves `requirements.md` and `design.md` (both produced by the
+  `specify` skill, each with its own approval), then reviews the written
+  implementation plan and selects its execution method. Conversational
+  design approval only permits invoking `specify`; approval of
+  `requirements.md` only permits writing `design.md`; approval of both
+  documents only permits invoking writing-plans.
 
 A reply approves the stage actually presented. Approval of an idea or
 feature scope does not approve artifacts that do not exist yet. Resume
@@ -81,7 +84,8 @@ override it:
 - **Architectural** — new projects, new subsystems, changes that
   restructure how components fit together or alter interfaces others
   depend on. Follow the full process: questions, approaches, sectioned
-  design, written spec, then the writing-plans skill.
+  design, then the `specify` skill (requirements -> design), then the
+  writing-plans skill.
 
 When in doubt between two paths, take the heavier one. The ratchet is
 one-way: hidden complexity discovered mid-task upgrades the path —
@@ -132,10 +136,9 @@ your path and complete them in order.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
-7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+6. **Hand off to `specify`** — invoke the `specify` skill with the agreed understanding and approved design as input (see "Handoff to specify" below). It writes `specs/<feature>/requirements.md`, then `design.md`, each behind its own approval gate
+7. **Spec self-review** — once both documents are approved, quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+8. **Transition to implementation** — invoke writing-plans skill to create implementation plan from the approved `requirements.md` and `design.md`
 
 ## Process Flow
 
@@ -153,9 +156,9 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Write design doc" [shape=box];
+    "Invoke specify skill\n(requirements -> design)" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
-    "User reviews spec?" [shape=diamond];
+    "Both documents approved?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
     "Hidden complexity? Upgrade path" [shape=box];
 
@@ -173,17 +176,18 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "User reviews spec?";
-    "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User approves design?" -> "Invoke specify skill\n(requirements -> design)" [label="yes"];
+    "Invoke specify skill\n(requirements -> design)" -> "Both documents approved?";
+    "Both documents approved?" -> "Invoke specify skill\n(requirements -> design)" [label="changes requested"];
+    "Both documents approved?" -> "Spec self-review\n(fix inline)" [label="approved"];
+    "Spec self-review\n(fix inline)" -> "Invoke writing-plans skill";
 }
 ```
 
-**Terminal states are path-bound.** Architectural: the ONLY skill you
-invoke after brainstorming is writing-plans — never frontend-design,
-mcp-builder, or any other implementation skill. Bounded: after
+**Terminal states are path-bound.** Architectural: the only skills you
+invoke after brainstorming are `specify` and then writing-plans, in that
+order — never frontend-design, mcp-builder, or any other implementation
+skill. Bounded: after
 approval, implementation proceeds directly through the normal
 development workflow; no plan document. Spike: the terminal state is a
 reported recommendation.
@@ -236,15 +240,29 @@ is the whole process.
 
 ## After the Design (architectural path)
 
-**Documentation:**
+**Handoff to specify:**
 
-- Write the validated design (spec) to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
-  - (User preferences for spec location override this default)
-- Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
+The written spec is produced by the `specify` skill, not by this one. Do
+not write a separate design doc under `docs/superpowers/specs/`.
+
+- Invoke `specify` once the conversational design is approved. Pass it the
+  feature name (kebab-case), the agreed understanding (intent, constraints,
+  success criteria), the chosen approach and the approved design sections.
+- `specify` starts from that material: it must not re-ask the questions
+  already answered here. Assumptions go into the `Supuestos` section of
+  `requirements.md`; decisions and discarded alternatives go into
+  `design.md`.
+- `specify` owns the approval gates for its documents (requirements first,
+  then design). Do not skip or merge them. Where it is ambiguous, prefer
+  `specs/<feature>/` inside the project folder that holds the feature.
+- Use elements-of-style:writing-clearly-and-concisely skill if available.
+- Commit both documents to git once approved.
+
+If the user invokes `specify` directly (without brainstorming), `specify`
+works on its own; this handoff only applies when brainstorming comes first.
 
 **Spec Self-Review:**
-After writing the spec document, look at it with fresh eyes:
+After `requirements.md` and `design.md` are both approved, look at them with fresh eyes (the reviewer prompt in `spec-document-reviewer-prompt.md` can be dispatched for this):
 
 1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
 2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
@@ -254,16 +272,16 @@ After writing the spec document, look at it with fresh eyes:
 Fix any issues inline. No need to re-review — just fix and move on.
 
 **User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
+`specify` already gets explicit approval of each document. After the self-review, if you changed anything, tell the user what changed and ask once more before proceeding:
 
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+> "Spec ready in `specs/<feature>/` (`requirements.md` and `design.md`). Please confirm it is OK to start writing the implementation plan."
 
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+If they request changes, make them (via `specify`, keeping `design.md` aligned with `requirements.md`) and re-run the self-review. Only proceed once the user approves.
 
 **Implementation:**
 
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+- Invoke the writing-plans skill to create a detailed implementation plan from the approved documents
+- Do NOT invoke any other implementation skill. writing-plans is the next step after `specify`.
 
 ## Visual Companion
 
@@ -282,4 +300,4 @@ A browser-based companion for showing mockups, diagrams, and visual options duri
 A question about a UI topic is not automatically a visual question. "What does personality mean in this context?" is a conceptual question — use the terminal. "Which wizard layout works better?" is a visual question — use the browser.
 
 If they agree to the companion, read the detailed guide before proceeding:
-`skills/brainstorming/visual-companion.md`
+`.claude/skills/brainstorming/visual-companion.md`
