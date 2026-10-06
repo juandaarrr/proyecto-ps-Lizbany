@@ -1,0 +1,17 @@
+# Datos sensibles de pacientes y pagos (control de terapias). Nunca subir al repositorio.
+CUADRO CONTROL/
+
+# Documentos personales y de identidad (cedula, tarjeta profesional, diplomas). Nunca subir al repositorio.
+CERTIFICADOS/
+
+# Videos y material pesado de edicion (viven en OneDrive, no en git).
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.m4v
+
+# Carpetas de reels y videos (viven en OneDrive, no en git).
+REELS FINALES/
+VIDEOS/
