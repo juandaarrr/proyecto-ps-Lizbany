@@ -10,8 +10,8 @@
 - Registra en la Bitácora toda decisión que no estaba en el diseño: qué se decidió, por qué y qué alternativas se descartaron.
 - Si una decisión cambia un requisito o el diseño, anótala también en **Cambios a la spec** y propón la edición de `requirements.md` o `design.md` para aprobación del usuario.
 - **Quién hace cada tarea:** las marcadas **(Lizbany)** necesitan una decisión, una gestión o una acción de ella. Las demás las puede preparar Claude para que ella las revise.
-- Las tareas 14, 17, 20 y 28 son **ciclos de varias semanas**: se registran semana a semana en su Bitácora.
-- La **Fase 6 (control financiero)** corre en paralelo a las demás: sus tareas 22 a 26 pueden hacerse desde ya, antes de la semana 1, y la tarea 28 se repite cada semana junto con el ciclo de marketing.
+- Las tareas 14, 17, 20 y 29 son **ciclos de varias semanas**: se registran semana a semana en su Bitácora.
+- La **Fase 6 (control financiero)** corre en paralelo a las demás: sus tareas 22 a 27 pueden hacerse desde ya, antes de la semana 1, y la tarea 29 se repite cada viernes junto con el ciclo de marketing.
 - **Datos sensibles:** el archivo `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx` tiene nombres de pacientes y pagos reales. Ninguna bitácora ni documento de esta spec debe copiar nombres ni datos de pacientes; se usan los identificadores (P001...).
 
 ## Resumen de avance
@@ -23,7 +23,7 @@
 | 3. Mes 1: Ansiedad (semanas 1 a 4) | 3 | 0 |
 | 4. Mes 2: Autoexigencia (semanas 5 a 8) | 3 | 0 |
 | 5. Mes 3: Relaciones y cambios (semanas 9 a 12) y cierre | 2 | 0 |
-| 6. Control financiero semanal (en paralelo) | 7 | 1 |
+| 6. Control financiero semanal (en paralelo) | 8 | 2 |
 
 ## Tareas
 
@@ -222,11 +222,11 @@
     | 2026-10-06 | Hecho | Nota de contexto: la carpeta vive dentro de OneDrive, así que se sincroniza con la nube de Microsoft aunque git la ignore. Esto no cambia la tarea (el requisito es mantenerla fuera del repositorio), pero queda anotado por si Lizbany quiere restringir quién accede a esa carpeta. |
 
 - [ ] **23. Revisar y corregir el archivo de control (Lizbany autoriza)**
-  - **Qué:** con una copia de respaldo hecha antes, corregir las fórmulas que afectan al resumen: el "Total plan" y el saldo de los pacientes con consultas individuales (hoy un saldo sale negativo), el saldo y el texto del mes atados a un nombre o a "septiembre" en Resumen mensual (pasarlos a datos que cambien solos), y la selección del mes. Alinear los precios del archivo con los confirmados en la tarea 3.
-  - **Requisitos:** Req. 10.2, 10.7, 10.10.
+  - **Qué:** con una copia de respaldo hecha antes, corregir las fórmulas que afectan al resumen: el saldo de los pacientes **sin plan** (consulta por consulta) en Seguimiento, que hoy sale negativo (el "Total plan" en 0 es correcto en esos casos y no se toca; el saldo debe calcularse como lo cobrado menos lo recibido), el saldo y el texto del mes atados a un nombre o a "septiembre" en Resumen mensual (pasarlos a datos que cambien solos), y la selección del mes. Alinear los precios del archivo con los confirmados en la tarea 3. Antes de editar nada, elegir y probar **sobre una copia** el método de edición que conserve fórmulas, listas desplegables y gráficos (automatización de Excel en Windows, o edición directa de los XML del archivo); `openpyxl` solo si la prueba demuestra que no pierde nada.
+  - **Requisitos:** Req. 10.2, 10.7, 10.10, 10.13.
   - **Diseño:** Control financiero de terapias; Riesgos (fórmulas con datos fijos y editar Excel).
   - **Depende de:** tareas 3 y 22.
-  - **Criterio de terminado:** existe una copia de respaldo previa; ningún saldo de la hoja Seguimiento es negativo sin motivo; la hoja Resumen mensual no contiene nombres ni un mes escrito a mano; la lista desplegable de "Estado pago" sigue funcionando; Lizbany revisó y aprobó los cambios.
+  - **Criterio de terminado:** existe una copia de respaldo previa; ningún saldo de la hoja Seguimiento es negativo sin motivo; la hoja Resumen mensual no contiene nombres ni un mes escrito a mano; la lista desplegable de "Estado pago" sigue funcionando; la bitácora registra el método de edición elegido y la prueba en copia que demuestra que conserva fórmulas y listas; Lizbany revisó y aprobó los cambios.
   - **Bitácora:** _sin registros_
 
 - [ ] **24. Crear la hoja "Resumen semanal"**
@@ -237,36 +237,52 @@
   - **Criterio de terminado:** la hoja existe con todas las columnas; para al menos 3 semanas con datos reales, los valores coinciden con la suma hecha a mano de la hoja Pagos; una semana sin datos aparece en ceros con la nota "sin movimientos"; las fórmulas y listas del resto del archivo siguen funcionando.
   - **Bitácora:** _sin registros_
 
-- [ ] **25. Definir el procedimiento semanal del control financiero (Lizbany)**
-  - **Qué:** `marketing/procedimiento-financiero-semanal.md` con: el día de entrega (propuesta: lunes), cómo informa Lizbany las sesiones y pagos de la semana (propuesta: por el chat), los datos que se piden por cada sesión, la regla de que un abono no se asume como pago total, qué se hace ante datos faltantes, registros duplicados y archivo abierto o ausente, y el formato del resumen que se entrega (sin nombres, solo P001...). No incluye datos de pacientes.
+- [x] **25. Definir el procedimiento semanal del control financiero (Lizbany)**
+  - **Qué:** `marketing/procedimiento-financiero-semanal.md` con: el día de entrega (viernes), cómo informa Lizbany las sesiones y pagos (por el chat; Claude los registra y le pregunta lo que no quede claro), los datos que se piden por cada sesión, la regla de que un abono no se asume como pago total, qué se hace ante datos faltantes, registros duplicados y archivo abierto o ausente, y el formato del resumen que se entrega (sin nombres, solo P001...). No incluye datos de pacientes.
   - **Requisitos:** Req. 10.1, 10.4, 10.5, 10.11, 10.12.
   - **Diseño:** Control financiero de terapias; Flujo de datos (ciclo financiero semanal).
   - **Depende de:** ninguna.
   - **Criterio de terminado:** el archivo existe con todos los puntos, Lizbany aprobó el día, la forma de entrega y el formato del resumen, y el archivo no contiene ningún nombre ni dato de paciente.
+  - **Bitácora:**
+
+    | Fecha | Tipo | Registro |
+    |---|---|---|
+    | 2026-10-06 | Hecho | Se redactó `marketing/procedimiento-financiero-semanal.md` con: decisiones a aprobar, calendario, datos que se piden por sesión, mensaje tipo, ciclo de Claude en 7 pasos, reglas (ingreso = valor recibido, abono no es pago total, duplicados, datos faltantes, archivo abierto, semana sin movimientos, restauración), formato del resumen con ejemplo ilustrativo y privacidad. Se comprobó que no contiene nombres ni datos de pacientes. |
+    | 2026-10-06 | Decisión | El día de entrega propuesto es el lunes y la forma de entrega es el chat con Claude. Alternativa: que Lizbany registre ella misma en el archivo y avise. Se dejaron como casillas para que ella apruebe o cambie. |
+    | 2026-10-06 | Bloqueo | Falta la aprobación de Lizbany sobre día, forma de entrega y formato del resumen; hasta entonces la tarea sigue en progreso. |
+    | 2026-10-06 | Hecho | Lizbany aprobó: entrega los **lunes**, los datos van **por el chat**, el **formato del resumen** del documento y la **regla de que un abono no se asume como pago total**. Se marcaron las 4 casillas del documento y se cerró el bloqueo. Criterio cumplido: el archivo existe con todos los puntos, está aprobado y no contiene nombres ni datos de pacientes. |
+    | 2026-10-06 | Cambio | Lizbany ajustó la decisión: los datos se entregan los **viernes** (no los lunes), por el chat, y Claude **pregunta lo que no entienda** antes de registrar; la semana va de lunes a domingo; los gráficos van en una hoja **Panel** dentro del mismo Excel. Se actualizó `marketing/procedimiento-financiero-semanal.md`. El formato del resumen (ahora con semana en curso parcial y semana anterior cerrada) se confirma con Lizbany en la primera corrida (tarea 27). |
+
+- [ ] **26. Crear la hoja "Panel" con gráficos**
+  - **Qué:** la hoja `Panel` en `Control_Terapias_Lizbany.xlsx` con 5 gráficos nativos de Excel alimentados por fórmulas: ingresos recibidos por semana (últimas 12), ingresos frente a cobros por mes, saldos pendientes por paciente (por ID), ingresos por forma de pago y sesiones por tipo. Colores de la paleta de marca y títulos legibles.
+  - **Requisitos:** Req. 10.10, 10.14.
+  - **Diseño:** Control financiero de terapias (Panel); Modelos de datos (Panel).
+  - **Depende de:** tarea 24.
+  - **Criterio de terminado:** la hoja existe con los 5 gráficos; con los datos reales actuales, los valores de cada gráfico coinciden con la suma hecha a mano; en una copia, al agregar una fila de prueba en Pagos los gráficos cambian sin editar nada más; el archivo se abre sin errores y Lizbany aprobó la legibilidad.
   - **Bitácora:** _sin registros_
 
-- [ ] **26. Ejecutar la primera corrida de prueba del control financiero**
-  - **Qué:** una actualización completa con datos reales de la semana más reciente: respaldo, registro en Pagos, actualización de Seguimiento, fila en Resumen semanal, verificación y entrega del resumen. Incluye una prueba de un registro duplicado y de un dato faltante.
-  - **Requisitos:** Req. 10.1 a 10.12.
+- [ ] **27. Ejecutar la primera corrida de prueba del control financiero**
+  - **Qué:** una actualización completa con datos reales, siguiendo el procedimiento del viernes: Lizbany envía los datos por el chat, Claude hace el respaldo, registra en Pagos, actualiza Seguimiento y Pacientes, actualiza Resumen semanal, verifica Panel y fórmulas, y entrega el resumen (semana en curso parcial y semana anterior cerrada). Incluye una prueba de un registro duplicado, de un dato faltante y de un dato cuya ubicación sea ambigua. Aquí Lizbany confirma el formato final del resumen.
+  - **Requisitos:** Req. 10.1 a 10.14.
   - **Diseño:** Control financiero de terapias; Estrategia de pruebas (prueba del control financiero).
-  - **Depende de:** tareas 22, 23, 24 y 25.
-  - **Criterio de terminado:** (1) se creó una copia en `respaldos/`; (2) los ingresos del resumen coinciden con la suma manual de "Valor recibido" de la semana; (3) la suma semanal del mes coincide con "Ingresos recibidos en el mes"; (4) fórmulas y listas siguen funcionando; (5) el duplicado y el dato faltante provocaron la pregunta a Lizbany y no se registraron solos; (6) el resumen entregado no contiene nombres; (7) `git status` no muestra `CUADRO CONTROL/`.
+  - **Depende de:** tareas 22, 23, 24, 25 y 26.
+  - **Criterio de terminado:** (1) se creó una copia en `respaldos/`; (2) los ingresos del resumen coinciden con la suma manual de "Valor recibido" de la semana; (3) la suma semanal del mes coincide con "Ingresos recibidos en el mes"; (4) fórmulas, listas y gráficos siguen funcionando; (5) el duplicado, el dato faltante y el dato ambiguo provocaron una pregunta a Lizbany y no se registraron solos; (6) el resumen entregado no contiene nombres; (7) `git status` no muestra `CUADRO CONTROL/`; (8) los gráficos del Panel reflejan los datos de la corrida; (9) Lizbany confirmó el formato del resumen.
   - **Bitácora:** _sin registros_
 
-- [ ] **27. Programar el recordatorio semanal (opcional)**
-  - **Qué:** una tarea programada que, el día acordado en la tarea 25, pida a Lizbany los datos de la semana (o confirme que ya están en el archivo) y lance el ciclo financiero.
+- [ ] **28. Programar el recordatorio semanal del viernes (opcional)**
+  - **Qué:** una tarea programada que cada viernes pida a Lizbany las sesiones y pagos desde el viernes anterior y lance el ciclo financiero.
   - **Requisitos:** Req. 10.1.
   - **Diseño:** Control financiero de terapias; Flujo de datos (ciclo financiero semanal).
   - **Depende de:** tarea 25.
   - **Criterio de terminado:** la tarea programada existe, se ejecutó una vez de prueba y Lizbany recibió la solicitud; o la bitácora registra que se decidió no programarla y el ciclo se inicia manualmente.
   - **Bitácora:** _sin registros_
 
-- [ ] **28. Ejecutar el ciclo financiero semanal (semanas 1 a 12)**
-  - **Qué:** cada semana, el ciclo del diseño: comprobar el archivo, hacer la copia de respaldo, registrar sesiones y pagos informados, actualizar Seguimiento y Pacientes, agregar la fila de la semana en Resumen semanal, verificar, y entregar a Lizbany el resumen financiero semanal (sesiones, cobros, ingresos recibidos, pendiente por cobrar, forma de pago, acumulado del mes y variación frente a la semana anterior). Se registra semana a semana en esta bitácora, sin nombres ni datos de pacientes.
-  - **Requisitos:** Req. 10.1 a 10.12.
+- [ ] **29. Ejecutar el ciclo financiero semanal (semanas 1 a 12)**
+  - **Qué:** cada viernes, el ciclo del diseño: recibir los datos por el chat, preguntar lo que no quede claro, comprobar el archivo, hacer la copia de respaldo, registrar en Pagos, Pacientes y Seguimiento, actualizar Resumen semanal, verificar fórmulas, listas y Panel, y entregar a Lizbany el resumen (semana en curso parcial y semana anterior cerrada). Se registra semana a semana en esta bitácora, sin nombres ni datos de pacientes.
+  - **Requisitos:** Req. 10.1 a 10.14.
   - **Diseño:** Control financiero de terapias; Flujo de datos (ciclo financiero semanal).
-  - **Depende de:** tarea 26.
-  - **Criterio de terminado:** la hoja Resumen semanal tiene las 12 semanas (las sin movimientos, en ceros con su nota); cada semana tiene su copia en `respaldos/` (se conservan las 4 más recientes) y su verificación aprobada; al cierre de cada mes la suma de los ingresos semanales coincide con "Ingresos recibidos en el mes"; Lizbany recibió cada resumen sin nombres de pacientes.
+  - **Depende de:** tarea 27.
+  - **Criterio de terminado:** la hoja Resumen semanal tiene las 12 semanas (las sin movimientos, en ceros con su nota); cada viernes tiene su copia en `respaldos/` (se conservan las 4 más recientes) y su verificación aprobada; los gráficos del Panel se actualizaron cada semana; al cierre de cada mes la suma de los ingresos semanales coincide con "Ingresos recibidos en el mes"; Lizbany recibió cada resumen sin nombres de pacientes.
   - **Bitácora:** _sin registros_
 
 ## Cobertura de requisitos
@@ -284,7 +300,7 @@ Todo criterio de aceptación debe estar cubierto por al menos una tarea.
 | Req. 7 (perfil y camino a la cita) | 3, 5, 6, 11, 12, 13, 14, 17, 20 |
 | Req. 8 (medición) | 4, 14, 15, 16, 17, 19, 20, 21 |
 | Req. 9 (pauta) | 3, 4, 18 |
-| Req. 10 (control financiero semanal) | 22, 23, 24, 25, 26, 27, 28 |
+| Req. 10 (control financiero semanal) | 22, 23, 24, 25, 26, 27, 28, 29 |
 
 Detalle por criterio:
 
@@ -315,14 +331,15 @@ Criterios del Req. 10:
 
 | Criterio | Tareas | Criterio | Tareas |
 |---|---|---|---|
-| 10.1 | 25, 26, 27, 28 | 10.7 | 23, 24, 26 |
-| 10.2 | 23, 26, 28 | 10.8 | 24, 26, 28 |
-| 10.3 | 22, 26, 28 | 10.9 | 24, 28 |
-| 10.4 | 25, 26, 28 | 10.10 | 23, 26, 28 |
-| 10.5 | 25, 26, 28 | 10.11 | 25, 26, 28 |
-| 10.6 | 24, 26, 28 | 10.12 | 22, 25, 26, 28 |
+| 10.1 | 25, 27, 28, 29 | 10.8 | 24, 27, 29 |
+| 10.2 | 23, 27, 29 | 10.9 | 24, 29 |
+| 10.3 | 22, 27, 29 | 10.10 | 23, 26, 27, 29 |
+| 10.4 | 25, 27, 29 | 10.11 | 25, 27, 29 |
+| 10.5 | 25, 27, 29 | 10.12 | 22, 25, 27, 29 |
+| 10.6 | 24, 27, 29 | 10.13 | 23 |
+| 10.7 | 23, 24, 27 | 10.14 | 26, 27, 29 |
 
-Requisitos no funcionales: accesibilidad (tareas 1, 10), privacidad (4, 6, 14, 17, 20, 22, 26, 28), sostenibilidad (14, 17, 20) y carga de trabajo (7, 15).
+Requisitos no funcionales: accesibilidad (tareas 1, 10), privacidad (4, 6, 14, 17, 20, 22, 27, 29), sostenibilidad (14, 17, 20) y carga de trabajo (7, 15).
 
 ## Decisiones transversales
 
@@ -330,7 +347,10 @@ Decisiones que afectan a varias tareas o a toda la feature.
 
 | Fecha | Decisión | Motivo | Tareas afectadas |
 |---|---|---|---|
-| _sin registros_ | | | |
+| 2026-10-06 | El "Total plan" en 0 de un paciente sin plan es correcto y no se modifica. Se corrige la fórmula del saldo: sin plan, saldo = cobrado − recibido; con plan, Total plan − Total pagado (mínimo 0). | Lizbany vende paquetes (por ejemplo, 4 consultas por un valor fijo) y también consultas individuales; en las individuales no hay un total de plan. El diagnóstico inicial ("Total plan en 0 es el error") era incorrecto. | 23, 24, 26 |
+| 2026-10-06 | Cada viernes Lizbany envía por el chat las sesiones y pagos y Claude los registra, preguntando si no queda claro en qué hoja o campo va un dato. La semana financiera va de lunes a domingo; el viernes se entrega la semana en curso (parcial) y la anterior (cerrada). | Decisión de Lizbany. Una persona valida cada dato antes de que entre al archivo, y las fórmulas hacen el resto. Sustituye la propuesta inicial de entrega los lunes. | 25, 27, 28, 29 |
+| 2026-10-06 | Los gráficos van en una hoja "Panel" dentro del mismo Excel, no en un tablero web ni en un informe aparte. | Decisión de Lizbany. Los datos no salen del archivo y se actualizan con las fórmulas. | 26, 27, 29 |
+| 2026-10-06 | El método de edición del Excel debe conservar fórmulas, listas desplegables y gráficos; `openpyxl` no se usa a ciegas. | `openpyxl` pierde las extensiones de validación y los gráficos que ya existían al volver a guardar. | 23, 24, 26, 27, 29 |
 
 ## Cambios a la spec
 
@@ -338,4 +358,5 @@ Ajustes a `requirements.md` o `design.md` surgidos durante la implementación.
 
 | Fecha | Documento | Cambio propuesto | Estado |
 |---|---|---|---|
-| _sin registros_ | | | |
+| 2026-10-06 | `requirements.md` | Req. 10 reescrito: entrega los viernes por el chat, aclaraciones antes de registrar, semana en curso parcial y anterior cerrada, propósito de cada hoja (10.13) y hoja Panel con gráficos (10.14). Supuestos y pregunta abierta ajustados. | Pendiente de revisión de Lizbany |
+| 2026-10-06 | `design.md` | Componente de control financiero, ciclo del viernes, hoja Panel (modelo y gráficos), errores nuevos, prueba del Panel y riesgo de método de edición. | Pendiente de revisión de Lizbany |

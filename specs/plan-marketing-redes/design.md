@@ -13,8 +13,10 @@ Decisiones clave y alternativas descartadas:
 - **Banco de piezas y grabación en tandas** (Req. 3.4 y 3.6) para proteger la constancia, que es el mayor riesgo para una persona sola.
 - **Pauta solo sobre un reel ganador y con tope de gasto** (Req. 9), en vez de gastar desde el inicio: con menos de 500 seguidores se necesitan datos de qué contenido funciona antes de pagar por él.
 - **Estructura de carpetas simple en el proyecto** (`marketing/`), reutilizando los materiales que ya existen, en vez de reorganizar lo producido.
-- **Control financiero sobre el archivo existente** (`CUADRO CONTROL/Control_Terapias_Lizbany.xlsx`), con una hoja nueva "Resumen semanal" dentro del mismo archivo, en vez de crear un archivo financiero aparte o mezclar los pagos con la hoja de seguimiento de marketing. Un solo origen de datos evita duplicar información, y mantener los datos de pacientes fuera de la hoja de marketing y del repositorio protege su privacidad (Req. 10.12). El resumen entregado usa identificadores (P001...) y no nombres.
-- **Actualizar con respaldo y verificación**: antes de tocar el archivo se guarda una copia y después se comprueba que fórmulas y listas desplegables siguen intactas, porque las librerías que editan Excel pueden perder funciones del archivo al guardar (ver Riesgos).
+- **Control financiero sobre el archivo existente** (`CUADRO CONTROL/Control_Terapias_Lizbany.xlsx`), con dos hojas nuevas, "Resumen semanal" y "Panel" (gráficos), dentro del mismo archivo, en vez de crear un archivo financiero aparte o mezclar los pagos con la hoja de seguimiento de marketing. Un solo origen de datos evita duplicar información, y mantener los datos de pacientes fuera de la hoja de marketing y del repositorio protege su privacidad (Req. 10.12). El resumen entregado usa identificadores (P001...) y no nombres.
+- **Lizbany envía los datos por el chat cada viernes y Claude los registra** (con preguntas de aclaración cuando no queda claro dónde va un dato), en vez de que ella edite el Excel o de automatizar la lectura de otra fuente. Así hay una persona que valida cada dato antes de que entre al archivo; las fórmulas y el Panel hacen el resto solos.
+- **Gráficos dentro del mismo Excel (hoja Panel)**, en vez de un tablero web o un informe aparte: no saca los datos del archivo, se actualiza con las fórmulas y Lizbany lo ve en la herramienta que ya usa.
+- **Actualizar con respaldo y verificación, y con un método de edición que conserve el archivo**: antes de tocar el archivo se guarda una copia y después se comprueba que fórmulas, listas desplegables y gráficos siguen intactos, porque algunas librerías que editan Excel pierden funciones o gráficos al guardar (ver Riesgos).
 
 **Requisitos cubiertos:** Req. 1 a 10.
 
@@ -35,7 +37,7 @@ MARCA PERSONAL AMOR/
 ├── prompt_edicion_reel_lizbany.md  # base de edición de reels
 ├── SKIILS/                         # skills de apoyo (opcionales)
 ├── CUADRO CONTROL/                 # DATOS SENSIBLES: fuera de git
-│   ├── Control_Terapias_Lizbany.xlsx   # hojas Pacientes, Pagos, Seguimiento, Resumen mensual + Resumen semanal (nueva)
+│   ├── Control_Terapias_Lizbany.xlsx   # hojas Pacientes, Pagos, Seguimiento, Resumen mensual + Resumen semanal y Panel (nuevas)
 │   └── respaldos/                  # copias con fecha antes de cada actualización
 └── web-lizbany-arango/             # la web (no se modifica)
 ```
@@ -83,7 +85,7 @@ sequenceDiagram
     L->>T: ajusta formato/tema de la semana siguiente
 ```
 
-**Ciclo financiero semanal (cada lunes, semana de lunes a domingo):**
+**Ciclo financiero semanal (cada viernes; la semana va de lunes a domingo):**
 
 ```mermaid
 sequenceDiagram
@@ -91,18 +93,18 @@ sequenceDiagram
     participant C as Claude
     participant X as Control_Terapias_Lizbany.xlsx
     participant R as respaldos/
-    C->>L: pide las sesiones y pagos de la semana (o confirma que ya están en el archivo)
+    C->>L: el viernes pide las sesiones y pagos desde el viernes anterior
     L-->>C: informa sesiones, valores, estado y forma de pago
     C->>X: comprueba que existe y no está abierto
     C->>R: guarda copia con fecha
-    C->>L: pregunta por datos faltantes o posibles duplicados
+    C->>L: pregunta dónde va cada dato dudoso, o por faltantes y duplicados
     C->>X: registra en Pagos y actualiza Seguimiento y Pacientes
-    C->>X: agrega la fila de la semana en Resumen semanal
-    C->>X: verifica fórmulas, listas y que la suma semanal = Resumen mensual
+    C->>X: actualiza Resumen semanal (los gráficos del Panel se recalculan solos)
+    C->>X: verifica fórmulas, listas, gráficos y que la suma semanal = Resumen mensual
     alt la verificación falla
         C->>R: restaura la copia y avisa
     else todo coincide
-        C-->>L: entrega el resumen financiero (sin nombres, solo P001...)
+        C-->>L: entrega el resumen: semana en curso (parcial) y semana anterior (cerrada); sin nombres, solo P001...
     end
 ```
 
@@ -176,12 +178,13 @@ stateDiagram-v2
 ### Control financiero de terapias
 - **Responsabilidad:** mantener actualizado el control de terapias de Lizbany y entregarle cada semana el resumen de las entradas de capital por sesiones. No es contabilidad formal ni cobra a los pacientes.
 - **Interfaz:**
-  - *Entrada:* sesiones y pagos de la semana informados por Lizbany (o ya registrados por ella en el archivo).
-  - *Base:* `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx`. Hojas existentes: **Pacientes** (ID, paciente, primera consulta, modalidad, estado, notas), **Pagos** (fecha, paciente, tipo, modalidad, valor cobrado, valor recibido, estado de pago, forma de pago, observaciones), **Seguimiento** (consultas incluidas, realizadas y pendientes, total plan, total pagado, saldo, última y próxima consulta) y **Resumen mensual** (ingresos recibidos, cobros, saldo, activos, consultas del mes).
+  - *Entrada:* las sesiones y pagos que Lizbany envía por el chat cada viernes (lo ocurrido desde el viernes anterior). Claude los registra y, si no tiene claro en qué hoja o campo va un dato, le pregunta antes de registrarlo.
+  - *Base:* `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx`. Hojas existentes: **Pacientes** (ID, paciente, primera consulta, modalidad, estado, notas), **Pagos** (fecha, paciente, tipo, modalidad, valor cobrado, valor recibido, estado de pago, forma de pago, observaciones), **Seguimiento** (solo pacientes con plan; consultas incluidas, realizadas y pendientes, total plan, total pagado, saldo, última y próxima consulta) y **Resumen mensual** (ingresos recibidos, cobros, saldo, activos, consultas del mes).
   - *Salida:* una fila nueva en la hoja **Resumen semanal** (calculada con `SUMIFS` por rango de fechas, para que siga viva) y el informe entregado a Lizbany con: sesiones realizadas (total y por tipo), cobros registrados, ingresos recibidos, pendiente por cobrar, ingresos por forma de pago, acumulado del mes y variación frente a la semana anterior. Los saldos pendientes se muestran por ID de paciente.
-- **Reglas:** el ingreso se calcula con "Valor recibido" y se asigna a la semana de la fecha de la fila; un pago posterior entra como fila nueva con su fecha de recepción; un abono nunca se asume como pago total; si falta o es dudoso un dato, se pregunta y no se inventa; un registro con misma fecha, paciente y valor requiere confirmación.
+- *Panel:* la hoja **Panel** contiene gráficos nativos de Excel alimentados por fórmulas (sin datos propios): ingresos recibidos por semana (últimas 12), ingresos frente a cobros por mes, saldos pendientes por paciente (por ID), ingresos por forma de pago y sesiones por tipo. Se actualizan solos al registrar datos.
+- **Reglas:** el ingreso se calcula con "Valor recibido" y se asigna a la semana (de lunes a domingo) de la fecha de la fila, y el resumen del viernes muestra la semana en curso (parcial) y la anterior ya cerrada; un pago posterior entra como fila nueva con su fecha de recepción; un abono nunca se asume como pago total; si falta o es dudoso un dato, se pregunta y no se inventa; un registro con misma fecha, paciente y valor requiere confirmación.
 - **Seguridad de los datos:** copia con fecha antes de cada actualización (se conservan las 4 más recientes), verificación posterior y restauración automática si algo no coincide. La carpeta `CUADRO CONTROL/` se excluye de git.
-- **Requisitos que atiende:** Req. 10.1 a 10.12 y el requisito no funcional de privacidad.
+- **Requisitos que atiende:** Req. 10.1 a 10.14 y el requisito no funcional de privacidad.
 
 ### Herramientas de apoyo (opcionales)
 - **Responsabilidad:** acelerar la producción sin cambiar el plan. De los skills de `SKIILS/`, los más útiles son `hook-generator`, `story-reel-scriptwriter`, `caption-writer`, `monthly-content-planner` y `performance-analyst`. Todos leen un perfil de marca (`brand-profile.md`) creado una sola vez.
@@ -253,6 +256,18 @@ Resumen semanal
   observaciones: texto                # "sin movimientos" si la semana está en cero
 ```
 
+Hoja `Panel` (sin datos propios; solo fórmulas y gráficos nativos de Excel):
+
+```text
+Panel
+  grafico_1: ingresos recibidos por semana (últimas 12)     # fuente: Resumen semanal
+  grafico_2: ingresos frente a cobros por mes              # fuente: Resumen mensual
+  grafico_3: saldos pendientes por paciente (por ID)       # fuente: Seguimiento y Pagos
+  grafico_4: ingresos por forma de pago                    # fuente: Resumen semanal
+  grafico_5: sesiones por tipo                             # fuente: Resumen semanal
+  # colores de la paleta de marca; títulos y ejes legibles para Lizbany
+```
+
 ## Manejo de errores
 
 | Situación | Detección | Respuesta | Requisito |
@@ -277,6 +292,9 @@ Resumen semanal
 | La suma semanal no coincide con el Resumen mensual, o se rompen fórmulas o listas | Verificación posterior al guardado | Se restaura la copia de respaldo y se avisa a Lizbany | 10.10 |
 | Archivo no encontrado o abierto en otro programa | Error al abrir o guardar | No se modifica nada; se avisa a Lizbany | 10.11 |
 | Datos de pacientes a punto de entrar al repositorio de git | `git status` muestra `CUADRO CONTROL/` | La carpeta está en `.gitignore` y no se agrega | 10.12 |
+| Dato ambiguo: no está claro en qué hoja o campo va | Lectura del mensaje de Lizbany | Se le hace una pregunta de aclaración antes de registrarlo | 10.4 |
+| Sesión de fin de semana que llega el viernes siguiente | La fecha de la fila cae en la semana anterior | La fila de esa semana se recalcula sola y el resumen lo indica | 10.8 |
+| Los gráficos se pierden o quedan rotos al guardar | Verificación posterior al guardado | Se restaura la copia de respaldo y se cambia el método de edición | 10.10, 10.14 |
 
 ## Estrategia de pruebas
 
@@ -295,6 +313,7 @@ El plan no se prueba con código, sino con **verificaciones de aceptación** que
   - Comprobar que la suma de los ingresos semanales del mes coincide con "Ingresos recibidos en el mes" de Resumen mensual (Req. 10.10).
   - Comprobar que la lista desplegable de "Estado pago" y las fórmulas de Seguimiento siguen funcionando tras guardar (Req. 10.10).
   - Probar un registro duplicado y uno con un dato faltante, y comprobar que se pide confirmación o el dato (Req. 10.4, 10.5).
+  - En una copia, agregar una fila de prueba en Pagos y comprobar que los gráficos del Panel cambian solos, sin editar nada más (Req. 10.14).
   - Comprobar que el resumen entregado no contiene nombres y que `git status` no muestra `CUADRO CONTROL/` (Req. 10.12).
 - **Casos clave de aceptación:**
   - Semana 4: la tasa real de conversación→cita está calculada (Req. 1.3).
@@ -310,8 +329,8 @@ El plan no se prueba con código, sino con **verificaciones de aceptación** que
 - **Hipótesis de conversión sin validar** (1 de cada 4): la meta de 2 a 3 conversaciones semanales cambia si la tasa real es distinta.
 - **Capacidad de respuesta en WhatsApp:** responder en menos de 24 horas puede ser difícil en días con consulta. Pendiente definir quién responde.
 - **Valores propuestos por el documento y ajustables:** el criterio de "reel ganador" (el doble de la mediana) y "al menos la mitad" de piezas del tema foco.
-- **Editar Excel puede dañar el archivo:** al guardar con una librería de Python (`openpyxl`), se pierden las extensiones de validación de datos y otras funciones que no soporta. Mitigación: copia de respaldo previa, verificación posterior y restauración automática; probar primero sobre una copia.
-- **Fórmulas con datos fijos en el archivo actual:** en Seguimiento el "Total plan" de un paciente con consultas individuales está en 0, lo que hace salir su saldo negativo; en Resumen mensual hay un saldo atado al nombre de un paciente y un texto con el mes escrito a mano. Se corrigen con la aprobación de Lizbany antes de confiar en el resumen.
+- **Editar Excel puede dañar el archivo:** al guardar con una librería de Python (`openpyxl`), se pierden las extensiones de validación de datos y **los gráficos que ya existieran** (solo conserva los que crea en esa misma ejecución). Como el Panel tiene gráficos y se edita cada semana, el método de edición debe elegirse y probarse antes: automatización de Excel en Windows (si está instalado) o edición directa de los XML del archivo. Mitigación: copia de respaldo previa, verificación posterior y restauración automática; probar siempre primero sobre una copia.
+- **Fórmulas con datos fijos en el archivo actual:** en Seguimiento el "Total plan" en 0 es correcto para los pacientes sin plan (consulta por consulta), pero la fórmula del saldo (Total plan − Total pagado) les da un valor negativo; para ellos el saldo debe ser lo cobrado menos lo recibido, y para quienes tienen plan se mantiene Total plan − Total pagado (con mínimo 0); en Resumen mensual hay un saldo atado al nombre de un paciente y un texto con el mes escrito a mano. Se corrigen con la aprobación de Lizbany antes de confiar en el resumen.
 - **Ingresos por fecha de la fila:** como Pagos tiene una sola fecha, un pago que llega después se registra como fila nueva; si no se hace, el ingreso queda en la semana equivocada.
 - **Precios que no coinciden:** los del archivo de control difieren de los del documento de marca, y los destacados (Req. 7.3) los publican. Deben aclararse antes de la prueba de arranque.
 - **Datos sensibles en git:** `CUADRO CONTROL/` hoy aparece como carpeta sin seguimiento del repositorio; hay que ignorarla antes de cualquier commit.
