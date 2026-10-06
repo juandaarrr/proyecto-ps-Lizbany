@@ -94,6 +94,12 @@ No tiene que ser perfecto: si algo falta o no queda claro, Claude pregunta.
 6. **Verifica:** que fórmulas, listas desplegables y gráficos sigan funcionando, y que la suma de ingresos semanales del mes coincida con "Ingresos recibidos en el mes" de **Resumen mensual**. Si algo no coincide, restaura la copia y avisa.
 7. **Entrega el resumen** a Lizbany.
 
+### Herramientas
+
+Todo este ciclo está automatizado en el skill del proyecto **`control-semanal-terapias`** (`.claude/skills/control-semanal-terapias/`): un registrador que valida y escribe en el Excel sin perder fórmulas, listas ni gráficos, un verificador con 12 comprobaciones y el generador del resumen. Lizbany solo tiene que abrir un chat con Claude en este proyecto y enviar sus datos con el mensaje tipo; Claude sigue la guía del skill.
+
+**Primera vez:** hay que poner el archivo al día desde el 16/09/2026 hasta el domingo 04/10/2026; desde el viernes 09/10/2026 se continúa cada viernes.
+
 ## Reglas
 
 - **Ingreso = "Valor recibido".** Lo cobrado y no recibido no cuenta como ingreso; aparece como "pendiente por cobrar".

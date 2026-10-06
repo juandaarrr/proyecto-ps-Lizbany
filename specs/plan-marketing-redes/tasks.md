@@ -23,7 +23,7 @@
 | 3. Mes 1: Ansiedad (semanas 1 a 4) | 3 | 0 |
 | 4. Mes 2: Autoexigencia (semanas 5 a 8) | 3 | 0 |
 | 5. Mes 3: Relaciones y cambios (semanas 9 a 12) y cierre | 2 | 0 |
-| 6. Control financiero semanal (en paralelo) | 8 | 4 |
+| 6. Control financiero semanal (en paralelo) | 8 | 5 |
 
 ## Tareas
 
@@ -300,13 +300,21 @@
     | 2026-10-06 | Decisión | Detalles técnicos aprendidos: `Names.Add` por COM interpreta la fórmula con la sintaxis **local** de Excel (en español: `DESREF`, `CONTAR.SI`, separador `;`) aunque el archivo la guarda en inglés; y la exportación a imagen de un gráfico fuera de la zona visible sale vacía hasta activar el gráfico (afecta solo a la imagen, no al archivo). Scripts en `respaldo-limpieza-git/scripts/` (fuera del repositorio). |
     | 2026-10-06 | Bloqueo | Falta que **Lizbany abra el archivo, revise la hoja Panel y apruebe la legibilidad** de los gráficos (criterio de terminado). Hasta entonces la tarea sigue en progreso. |
 
-- [ ] **27. Ejecutar la primera corrida de prueba del control financiero**
+- [x] **27. Ejecutar la primera corrida de prueba del control financiero**
   - **Qué:** una actualización completa con datos reales, siguiendo el procedimiento del viernes: Lizbany envía los datos por el chat, Claude hace el respaldo, registra en Pagos, actualiza Seguimiento y Pacientes, actualiza Resumen semanal, verifica Panel y fórmulas, y entrega el resumen (semana en curso parcial y semana anterior cerrada). Incluye una prueba de un registro duplicado, de un dato faltante y de un dato cuya ubicación sea ambigua. Aquí Lizbany confirma el formato final del resumen.
   - **Requisitos:** Req. 10.1 a 10.14.
   - **Diseño:** Control financiero de terapias; Estrategia de pruebas (prueba del control financiero).
   - **Depende de:** tareas 22, 23, 24, 25 y 26.
   - **Criterio de terminado:** (1) se creó una copia en `respaldos/`; (2) los ingresos del resumen coinciden con la suma manual de "Valor recibido" de la semana; (3) la suma semanal del mes coincide con "Ingresos recibidos en el mes"; (4) fórmulas, listas y gráficos siguen funcionando; (5) el duplicado, el dato faltante y el dato ambiguo provocaron una pregunta a Lizbany y no se registraron solos; (6) el resumen entregado no contiene nombres; (7) `git status` no muestra `CUADRO CONTROL/`; (8) los gráficos del Panel reflejan los datos de la corrida; (9) Lizbany confirmó el formato del resumen.
-  - **Bitácora:** _sin registros_
+  - **Bitácora:**
+
+    | Fecha | Tipo | Registro |
+    |---|---|---|
+    | 2026-10-06 | Decisión | **Cierre acordado sin la corrida con datos reales.** Los datos de las sesiones y pagos los tiene Lizbany, no el responsable del proyecto. Se decidió dejar listo el programa para que ella, por el chat con Claude, ponga el archivo al día **desde el 16/09/2026 hasta el domingo 04/10/2026** y desde el viernes 09/10/2026 continúe cada viernes. La primera corrida real queda como primer uso de la tarea 29. |
+    | 2026-10-06 | Hecho | **Programa construido** como skill del proyecto `.claude/skills/control-semanal-terapias/` (solo código y guía, sin datos de pacientes): `registrar-semana.ps1` (valida y registra con Excel por COM; si hay dudas devuelve preguntas y **no escribe nada**; crea respaldo y conserva los 4 más recientes; escribe en Pagos, Pacientes y Seguimiento), `verificar-y-resumir.py` (12 verificaciones y resumen sin nombres) y `SKILL.md` (el ciclo paso a paso, reglas de privacidad, precios y la guía de la puesta al día). |
+    | 2026-10-06 | Hecho | **Pruebas automáticas sobre una copia con datos ficticios, todas en verde:** (1) 9 preguntas detectadas sin modificar el archivo ni un byte (precio que no coincide, falta forma de pago, duplicado, paciente desconocido, fecha mal escrita, "Pagado" con valor menor al cobrado, modalidad y estado inválidos, fila repetida en el mismo envío); (2) validación de un envío correcto sin escribir; (3) registro real con respaldo idéntico al original, filas nuevas con el nombre oficial, paciente nuevo y fila de Seguimiento con saldo 190.000; (4) las 12 verificaciones pasan después de registrar y el resumen usa solo IDs; (5) reenviar la misma sesión vuelve a preguntar por el duplicado y con confirmación se acepta; (6) restaurar el respaldo deja el archivo idéntico al original. |
+    | 2026-10-06 | Hecho | Correcciones halladas por esas pruebas: una variable de PowerShell (`$cob:`) mal escrita en los mensajes, un envío sin bloque de seguimiento que generaba una pregunta falsa, y una comprobación nula con pacientes desconocidos. El Excel real no se tocó durante las pruebas y sigue pasando las 12 verificaciones. |
+    | 2026-10-06 | Cambio | **Criterios del terminado verificados:** (1) respaldo, (3) suma semanal = mes, (4) fórmulas, listas y gráficos, (5) preguntas sin escribir, (6) resumen sin nombres y (7) `git status` sin `CUADRO CONTROL/`. **No verificados con datos reales y trasladados a la primera ejecución de la tarea 29:** (2) coincidencia de los ingresos del resumen con la suma manual de una semana real, (8) que los gráficos del Panel reflejen los datos de esa corrida y (9) la confirmación de Lizbany del formato del resumen. |
 
 - [ ] **28. Programar el recordatorio semanal del viernes (opcional)**
   - **Qué:** una tarea programada que cada viernes pida a Lizbany las sesiones y pagos desde el viernes anterior y lance el ciclo financiero.
@@ -317,7 +325,7 @@
   - **Bitácora:** _sin registros_
 
 - [ ] **29. Ejecutar el ciclo financiero semanal (semanas 1 a 12)**
-  - **Qué:** cada viernes, el ciclo del diseño: recibir los datos por el chat, preguntar lo que no quede claro, comprobar el archivo, hacer la copia de respaldo, registrar en Pagos, Pacientes y Seguimiento, actualizar Resumen semanal, verificar fórmulas, listas y Panel, y entregar a Lizbany el resumen (semana en curso parcial y semana anterior cerrada). Se registra semana a semana en esta bitácora, sin nombres ni datos de pacientes.
+  - **Qué:** cada viernes, el ciclo del diseño: recibir los datos por el chat, preguntar lo que no quede claro, comprobar el archivo, hacer la copia de respaldo, registrar en Pagos, Pacientes y Seguimiento, actualizar Resumen semanal, verificar fórmulas, listas y Panel, y entregar a Lizbany el resumen (semana en curso parcial y semana anterior cerrada). Se registra semana a semana en esta bitácora, sin nombres ni datos de pacientes. Se ejecuta con el skill `control-semanal-terapias`. **La primera ejecución es la puesta al día desde el 16/09/2026 hasta el domingo 04/10/2026** (el último registro es del 15/09), y aprovecha para cerrar lo pendiente de la tarea 27 (suma manual de una semana real, gráficos del Panel con esos datos y confirmación del formato del resumen por Lizbany); desde el viernes 09/10/2026 el ciclo sigue cada viernes.
   - **Requisitos:** Req. 10.1 a 10.14.
   - **Diseño:** Control financiero de terapias; Flujo de datos (ciclo financiero semanal).
   - **Depende de:** tarea 27.
@@ -390,6 +398,7 @@ Decisiones que afectan a varias tareas o a toda la feature.
 | 2026-10-06 | Cada viernes Lizbany envía por el chat las sesiones y pagos y Claude los registra, preguntando si no queda claro en qué hoja o campo va un dato. La semana financiera va de lunes a domingo; el viernes se entrega la semana en curso (parcial) y la anterior (cerrada). | Decisión de Lizbany. Una persona valida cada dato antes de que entre al archivo, y las fórmulas hacen el resto. Sustituye la propuesta inicial de entrega los lunes. | 25, 27, 28, 29 |
 | 2026-10-06 | Los gráficos van en una hoja "Panel" dentro del mismo Excel, no en un tablero web ni en un informe aparte. | Decisión de Lizbany. Los datos no salen del archivo y se actualizan con las fórmulas. | 26, 27, 29 |
 | 2026-10-06 | El método de edición del Excel debe conservar fórmulas, listas desplegables y gráficos; `openpyxl` no se usa a ciegas. | `openpyxl` pierde las extensiones de validación y los gráficos que ya existían al volver a guardar. | 23, 24, 26, 27, 29 |
+| 2026-10-06 | El programa del ciclo semanal vive como skill del proyecto (`.claude/skills/control-semanal-terapias/`) con código y guía, sin datos. Los datos de cada envío se arman en un JSON temporal **fuera del repositorio** y se borran al terminar. | Permite que Lizbany, desde un chat con Claude, ponga el archivo al día sin que nadie improvise el procedimiento, y mantiene los datos de pacientes fuera de git. | 27, 29 |
 
 ## Cambios a la spec
 
