@@ -14,6 +14,7 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 - Las semanas se cuentan desde la **semana 1**, que empieza en la fecha de inicio que defina Lizbany (aún no fijada).
 - "Al menos la mitad" de las piezas del mes sobre el tema foco y el plazo de 24 horas para responder mensajes son valores propuestos por este documento, ajustables por Lizbany.
 - El material ya producido (reels finales, ideas de reels y carruseles, publicaciones) se reutiliza donde encaje con los temas de cada mes.
+- **Precios vigentes** (confirmados por Lizbany el 2026-10-06): consulta $110.000 COP; primera consulta o diagnóstico $90.000 COP; paquete de 4 consultas $380.000 COP. Un plan que incluye el diagnóstico y el paquete suma $470.000 COP. Los $100.000 y $350.000 de `PROYECTO MARCA PERSONAL.docx` están desactualizados.
 - La paleta (`#D9DD92`, `#776472`, `#DB9065`, `#646F4B`, `#71816D`) y las tipografías (Guía, Arsenal, Lustria) están definidas en `PROYECTO MARCA PERSONAL.docx`.
 - El control financiero usa como única base el archivo `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx` (hojas Pacientes, Pagos, Seguimiento y Resumen mensual). Contiene nombres de pacientes y pagos reales, por lo que es información sensible.
 - Claude no conoce por sí mismo las sesiones ni los pagos: Lizbany los envía por el chat cada viernes y Claude los registra en el archivo; si no le queda claro en qué hoja o campo va un dato, pregunta antes de registrarlo.
@@ -118,7 +119,7 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 
 1. WHEN empiece la semana 1 THE SYSTEM SHALL tener una bio que diga a quién ayuda y qué enfoque usa, en una frase, e incluya el enlace a WhatsApp con el mensaje del Req. 6.2.
 2. WHEN empiece la semana 1 THE SYSTEM SHALL tener al menos 4 destacados de historias: cómo son las sesiones, precios, cómo agendar y preguntas frecuentes.
-3. THE SYSTEM SHALL mostrar en los destacados los precios vigentes: $100.000 COP por sesión y $350.000 COP por el paquete de 4 sesiones, con el aviso de modalidad virtual y duración de 60 minutos.
+3. THE SYSTEM SHALL mostrar en los destacados los precios vigentes: consulta de $110.000 COP, primera consulta o diagnóstico de $90.000 COP y paquete de 4 consultas de $380.000 COP, con el aviso de modalidad virtual y duración de 60 minutos.
 4. WHEN llega una conversación nueva por WhatsApp THE SYSTEM SHALL responder en máximo 24 horas con una plantilla breve y cálida que proponga un horario.
 5. THE SYSTEM SHALL no pedir ni aceptar datos clínicos por WhatsApp antes de la primera consulta; ahí solo se coordina el horario y la modalidad.
 6. IF alguien escribe en crisis (por ejemplo, expresa riesgo para su vida) THEN THE SYSTEM SHALL responder de forma breve y cálida con la línea de emergencia local y no abordar el caso por mensajes.
@@ -158,7 +159,7 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 1. WHEN llegue el viernes de cada semana THE SYSTEM SHALL recibir por el chat las sesiones y pagos que Lizbany envíe desde el viernes anterior y registrarlos en `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx`, que es la única base: cada sesión o pago en la hoja Pagos (fecha, paciente, tipo de consulta, modalidad, valor cobrado, valor recibido, estado de pago, forma de pago), los pacientes nuevos o sus cambios de estado en Pacientes, y el avance de los pacientes con plan en Seguimiento.
 2. WHEN se registren sesiones o pagos THE SYSTEM SHALL actualizar, para cada paciente afectado, las consultas realizadas y pendientes, la última y la próxima consulta, el total pagado y el saldo pendiente, y en Pacientes el estado cuando Lizbany informe un cambio.
 3. WHEN vaya a modificarse el archivo THE SYSTEM SHALL guardar antes una copia de respaldo con la fecha en el nombre y conservar al menos las 4 copias más recientes.
-4. IF falta o es dudoso un dato (fecha, valor, estado, forma de pago, paciente o si corresponde a un plan), o no está claro en qué hoja o campo va, THEN THE SYSTEM SHALL hacer una pregunta de aclaración a Lizbany y no registrarlo hasta tener la respuesta; un abono se registra como abono y nunca se asume como pago total.
+4. IF falta o es dudoso un dato (fecha, valor, estado, forma de pago, paciente o si corresponde a un plan), o el valor cobrado no coincide con los precios vigentes (consulta $110.000, diagnóstico $90.000, paquete de 4 $380.000), o no está claro en qué hoja o campo va, THEN THE SYSTEM SHALL hacer una pregunta de aclaración a Lizbany y no registrarlo hasta tener la respuesta; un abono se registra como abono y nunca se asume como pago total.
 5. IF un registro nuevo coincide con uno existente en fecha, paciente y valor THEN THE SYSTEM SHALL pedir confirmación antes de agregarlo.
 6. WHEN termine el registro THE SYSTEM SHALL entregar un resumen financiero de la semana en curso (parcial, de lunes a viernes) y de la semana anterior (cerrada, con su fin de semana), con: sesiones realizadas (total y por tipo), cobros registrados, ingresos recibidos, monto pendiente por cobrar, ingresos por forma de pago, acumulado del mes y variación frente a la semana anterior.
 7. THE SYSTEM SHALL calcular los ingresos a partir de la columna "Valor recibido", asignar cada ingreso a la semana (de lunes a domingo) de la fecha de su fila, y no contar como ingreso lo cobrado y no recibido.
@@ -197,5 +198,4 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 - ¿Cuál es el tope de gasto para la pauta pequeña (Req. 9.2)?
 - ¿Qué dice la revisión con el Colegio Colombiano de Psicólogos sobre la publicidad permitida (Req. 5.6)?
 - ¿Lizbany atiende sábados o domingos? Si es así, esas sesiones se registran el viernes siguiente y actualizan la semana anterior.
-- Los precios del archivo de control ($90.000 la consulta diagnóstica, $110.000 la individual, $470.000 un plan mensual de 4 consultas) no coinciden con los de `PROYECTO MARCA PERSONAL.docx` ($100.000 por sesión y $350.000 por 4 sesiones), que usa el Req. 7.3 para los destacados. ¿Cuáles son los precios vigentes?
 - El archivo tiene fórmulas con datos fijos que afectan el resumen (la fórmula del saldo en Seguimiento da negativo para pacientes sin plan, el nombre de un paciente y el mes "septiembre" escritos a mano en Resumen mensual). ¿Lizbany autoriza corregirlos?

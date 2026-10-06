@@ -23,7 +23,7 @@
 | 3. Mes 1: Ansiedad (semanas 1 a 4) | 3 | 0 |
 | 4. Mes 2: Autoexigencia (semanas 5 a 8) | 3 | 0 |
 | 5. Mes 3: Relaciones y cambios (semanas 9 a 12) y cierre | 2 | 0 |
-| 6. Control financiero semanal (en paralelo) | 8 | 2 |
+| 6. Control financiero semanal (en paralelo) | 8 | 4 |
 
 ## Tareas
 
@@ -51,7 +51,11 @@
   - **Diseño:** Riesgos y decisiones pendientes; Pauta pequeña.
   - **Depende de:** ninguna.
   - **Criterio de terminado:** el archivo tiene los 7 datos y cada uno tiene un valor concreto (o "no aplica" con motivo).
-  - **Bitácora:** _sin registros_
+  - **Bitácora:**
+
+    | Fecha | Tipo | Registro |
+    |---|---|---|
+    | 2026-10-06 | Hecho | **Precios vigentes confirmados por Lizbany:** consulta $110.000; primera consulta o diagnóstico $90.000; paquete de 4 consultas $380.000 (un plan con diagnóstico y paquete suma $470.000). Los valores de `PROYECTO MARCA PERSONAL.docx` ($100.000 y $350.000) están desactualizados. Se actualizaron `requirements.md` (Supuestos y Req. 7.3) y `design.md`. Quedan pendientes los otros 6 datos: fecha de inicio, seguidores y pacientes actuales, hoja en la nube o local, tope de pauta, quién responde WhatsApp y experiencia de conversión. |
 
 - [ ] **4. Crear la hoja de seguimiento**
   - **Qué:** una hoja de cálculo con las pestañas Piezas, Semanas, Meses y Pauta y los campos del modelo de datos del diseño. El campo `etapa` de Piezas es obligatorio, `checklist_ok` lleva sí/no, y las métricas no disponibles se anotan "n/d" con su causa. Incluye la meta (6 a 10 pacientes, 2 a 3 conversaciones por semana) y la tasa de conversión de 0.25 como hipótesis. No tiene columnas para nombres ni datos personales.
@@ -221,21 +225,46 @@
     | 2026-10-06 | Decisión | Se ignora la carpeta completa en vez de solo el `.xlsx`, para que también queden fuera las copias de respaldo y cualquier archivo futuro que Lizbany guarde allí. Alternativa descartada: ignorar solo `*.xlsx`, que dejaría pasar otros formatos con los mismos datos. |
     | 2026-10-06 | Hecho | Nota de contexto: la carpeta vive dentro de OneDrive, así que se sincroniza con la nube de Microsoft aunque git la ignore. Esto no cambia la tarea (el requisito es mantenerla fuera del repositorio), pero queda anotado por si Lizbany quiere restringir quién accede a esa carpeta. |
 
-- [ ] **23. Revisar y corregir el archivo de control (Lizbany autoriza)**
+- [x] **23. Revisar y corregir el archivo de control (Lizbany autoriza)**
   - **Qué:** con una copia de respaldo hecha antes, corregir las fórmulas que afectan al resumen: el saldo de los pacientes **sin plan** (consulta por consulta) en Seguimiento, que hoy sale negativo (el "Total plan" en 0 es correcto en esos casos y no se toca; el saldo debe calcularse como lo cobrado menos lo recibido), el saldo y el texto del mes atados a un nombre o a "septiembre" en Resumen mensual (pasarlos a datos que cambien solos), y la selección del mes. Alinear los precios del archivo con los confirmados en la tarea 3. Antes de editar nada, elegir y probar **sobre una copia** el método de edición que conserve fórmulas, listas desplegables y gráficos (automatización de Excel en Windows, o edición directa de los XML del archivo); `openpyxl` solo si la prueba demuestra que no pierde nada.
   - **Requisitos:** Req. 10.2, 10.7, 10.10, 10.13.
   - **Diseño:** Control financiero de terapias; Riesgos (fórmulas con datos fijos y editar Excel).
   - **Depende de:** tareas 3 y 22.
   - **Criterio de terminado:** existe una copia de respaldo previa; ningún saldo de la hoja Seguimiento es negativo sin motivo; la hoja Resumen mensual no contiene nombres ni un mes escrito a mano; la lista desplegable de "Estado pago" sigue funcionando; la bitácora registra el método de edición elegido y la prueba en copia que demuestra que conserva fórmulas y listas; Lizbany revisó y aprobó los cambios.
-  - **Bitácora:** _sin registros_
+  - **Bitácora:**
 
-- [ ] **24. Crear la hoja "Resumen semanal"**
+    | Fecha | Tipo | Registro |
+    |---|---|---|
+    | 2026-10-06 | Decisión | **Método de edición: Excel por automatización COM** (Excel 2016+ instalado en el equipo), en vez de `openpyxl`. Motivo: el archivo tiene una validación de datos avanzada (extensión `x14`, lista de modalidad en Pagos) y formato condicional que `openpyxl` elimina al guardar; con COM se conservan. Descartado también editar los XML a mano: más frágil sin necesidad. El script queda en `respaldo-limpieza-git/scripts/tarea23.ps1` (fuera del repositorio). |
+    | 2026-10-06 | Hecho | Respaldo previo con suma de verificación idéntica: `CUADRO CONTROL/respaldos/Control_Terapias_Lizbany_2026-10-06_antes-tarea23.xlsx`. |
+    | 2026-10-06 | Hecho | **Prueba en copia** fuera de OneDrive y de git: el saldo del paciente sin plan pasó de −310.000 a 0, el del paciente con plan se mantuvo en 190.000; ingresos (410.000), cobros (600.000) y saldo total (190.000) no cambiaron; las 4 listas desplegables y el formato condicional se conservaron; 0 celdas con error. La copia se eliminó. |
+    | 2026-10-06 | Hecho | **Se aplicó al archivo real.** Seguimiento: saldo `=IF(Total plan>0, MAX(Total plan−Total pagado,0), cobrado−recibido)` en las 2 filas existentes. Resumen mensual: la etiqueta y el saldo atados a un nombre pasaron a "Saldos pendientes (total)" = suma de la nueva tabla "Saldos pendientes por paciente" (30 filas que se llenan solas desde la hoja Pacientes); la etiqueta de consultas toma el mes de la celda selectora. Verificación contra el respaldo celda por celda: Pacientes, Pagos y Hoja1 sin ninguna diferencia; Seguimiento 2 celdas (I4, I5); Resumen mensual solo las celdas previstas. La extensión `x14` y el formato condicional siguen presentes. |
+    | 2026-10-06 | Decisión | No se tocó el "Total plan" de quien no tiene plan (es correcto en 0). No se eliminó de Seguimiento al paciente sin plan, aunque Req. 10.13 dice que esa hoja es solo para pacientes con plan: borrar datos requiere la decisión de Lizbany. |
+    | 2026-10-06 | Bloqueo | Quedan abiertos: (1) **precios**: alinear los del archivo con los vigentes depende de la tarea 3, que sigue pendiente; (2) **aprobación de Lizbany** de los cambios; (3) la **nota de texto** de Resumen mensual (fila 12) menciona a un paciente por nombre y se dejó como la escribió Lizbany. |
+    | 2026-10-06 | Cambio | Observación sin corregir: la lista desplegable de modalidad en Pagos cubre solo D4:D10 (7 filas); las filas nuevas desde la 11 no la tendrán. Conviene extenderla a D4:D1000, pero requiere aprobación de Lizbany. |
+    | 2026-10-06 | Hecho | **Lizbany aprobó** los cambios del archivo y autorizó extender la lista de modalidad a `D4:D1000`. |
+    | 2026-10-06 | Hecho | **Lista de modalidad extendida a D4:D1000** (misma fuente, `Hoja1!A1:A3`). Respaldo previo con suma de verificación idéntica (`..._antes-extension-lista.xlsx`); prueba primero en una copia (eliminada). Se intentó aplicar con el archivo abierto por Lizbany en Excel: no se modificó nada hasta que lo cerró, como exige Req. 10.11. Verificación posterior contra el respaldo: **0 celdas de contenido distintas en las 5 hojas**; la lista queda guardada en la extensión `x14` con rango `D4:D1000`; la lista de estado de pago (`G4:G1000`) y el formato condicional siguen intactos; 0 celdas con error; sin procesos de Excel pendientes y el archivo libre. |
+    | 2026-10-06 | Decisión | La alineación de **precios** del archivo con los vigentes **se traslada a la tarea 3** (parámetros pendientes): no es parte del criterio de terminado de esta tarea y depende de datos que Lizbany aún no ha confirmado. Al cerrar la tarea 3 se aplicará como un cambio aparte, con respaldo previo. |
+    | 2026-10-06 | Hecho | Con los precios confirmados en la tarea 3 se comprobó que **no hay nada que alinear en el Excel**: no contiene una lista de precios, y sus valores ($90.000 diagnóstico, $110.000 consulta, plan de $470.000 = diagnóstico + paquete de $380.000) coinciden con los vigentes. |
+    | 2026-10-06 | Hecho | Criterio de terminado cumplido: respaldo previo existente; ningún saldo de Seguimiento es negativo (el de quien no tiene plan se calcula como cobrado − recibido); Resumen mensual no tiene un saldo atado a un nombre ni un mes escrito a mano (la tabla por paciente toma los nombres desde la hoja Pacientes, y la nota de texto de la fila 12 es de Lizbany); la lista desplegable de "Estado pago" funciona; el método de edición (Excel por COM) y su prueba en copia están registrados arriba; Lizbany revisó y aprobó. |
+
+- [x] **24. Crear la hoja "Resumen semanal"**
   - **Qué:** la hoja nueva en `Control_Terapias_Lizbany.xlsx` con los campos del modelo de datos del diseño (semana de lunes a domingo, sesiones totales y por tipo, cobros registrados, ingresos recibidos, pendiente por cobrar, ingresos por forma de pago, acumulado del mes, variación frente a la semana anterior y observaciones), calculados con fórmulas sobre la hoja Pagos.
   - **Requisitos:** Req. 10.6, 10.7, 10.8, 10.9.
   - **Diseño:** Control financiero de terapias; Modelos de datos (Resumen semanal).
   - **Depende de:** tarea 23.
   - **Criterio de terminado:** la hoja existe con todas las columnas; para al menos 3 semanas con datos reales, los valores coinciden con la suma hecha a mano de la hoja Pagos; una semana sin datos aparece en ceros con la nota "sin movimientos"; las fórmulas y listas del resto del archivo siguen funcionando.
-  - **Bitácora:** _sin registros_
+  - **Bitácora:**
+
+    | Fecha | Tipo | Registro |
+    |---|---|---|
+    | 2026-10-06 | Decisión | **Diseño de la hoja `Resumen semanal`:** 60 filas (una por semana, desde el lunes 17/08/2026, semana de la primera sesión registrada) y 18 columnas: inicio y fin de semana, estado (cerrada / en curso / futura según la fecha de hoy), sesiones (total y por tipo: diagnóstica, individual, de paquete), cobros registrados, ingresos recibidos, pendiente por cobrar, ingresos por Nequi, Llave Bancolombia y otras formas de pago, acumulado del mes hasta el domingo de esa semana, variación frente a la semana anterior ($ y %), observaciones ("sin movimientos" automática en semanas pasadas o en curso sin datos) y una columna Notas manual. Todo con fórmulas sobre Pagos; no hay datos de pacientes en la hoja. Se cuenta como sesión toda fila de Pagos cuyo tipo empieza por "Consulta"; un pago posterior sin tipo de consulta (por ejemplo, un abono) suma ingresos pero no sesiones. |
+    | 2026-10-06 | Hecho | Respaldo previo con suma de verificación idéntica (`..._antes-tarea24.xlsx`). Hoja construida primero en una **copia** con el método de la tarea 23 (Excel por COM). |
+    | 2026-10-06 | Hecho | **Verificación independiente** (Python recalculando desde las filas de Pagos): 60 semanas × 13 columnas calculadas, **0 diferencias**, tanto en la copia como en el archivo real. 5 semanas con datos reales coinciden con la suma hecha a mano; los ingresos de septiembre por fechas (410.000) coinciden con "Ingresos recibidos en el mes" de Resumen mensual. Las semanas pasadas o en curso sin datos muestran "sin movimientos". |
+    | 2026-10-06 | Hecho | **Prueba de actualización automática** en la copia (sin guardar): al agregar una fila de prueba en Pagos, la semana correspondiente pasó a 1 sesión y $110.000, desapareció "sin movimientos", el acumulado del mes y la variación de la semana siguiente se ajustaron solos. |
+    | 2026-10-06 | Hecho | **Aplicado al archivo real.** Las 5 hojas originales quedaron con **0 celdas distintas** frente al respaldo; la lista de modalidad (`D4:D1000`), la lista de estado de pago, la extensión `x14` y el formato condicional siguen presentes; 0 celdas con error; Excel cerrado y archivo libre al terminar. La copia de prueba se eliminó. |
+    | 2026-10-06 | Hecho | **Observación sobre cómo se registra un paquete:** en Pagos el valor completo del paquete va en la columna "Valor cobrado" de la primera fila y los pagos posteriores llegan con cobrado en 0; por eso "Pendiente por cobrar" de esa semana muestra el saldo del paquete. Es coherente con "cobros = lo que debió entrar" de Lizbany; el procedimiento lo tendrá en cuenta al preguntar. |
+    | 2026-10-06 | Cambio | Las columnas de forma de pago reconocen "Nequi" y cualquier texto que empiece por "Llave"; lo demás cae en "Otras formas de pago". El Panel (tarea 26) leerá de esta hoja los últimos 12 semanas. |
 
 - [x] **25. Definir el procedimiento semanal del control financiero (Lizbany)**
   - **Qué:** `marketing/procedimiento-financiero-semanal.md` con: el día de entrega (viernes), cómo informa Lizbany las sesiones y pagos (por el chat; Claude los registra y le pregunta lo que no quede claro), los datos que se piden por cada sesión, la regla de que un abono no se asume como pago total, qué se hace ante datos faltantes, registros duplicados y archivo abierto o ausente, y el formato del resumen que se entrega (sin nombres, solo P001...). No incluye datos de pacientes.

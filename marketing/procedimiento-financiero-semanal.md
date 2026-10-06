@@ -16,6 +16,17 @@ Cada viernes Lizbany envía por el chat lo ocurrido en su consulta. Claude lo re
 - [x] **Regla de abonos:** un abono se registra como abono y nunca se asume como pago total.
 - [ ] **Formato del resumen:** el de la sección "Resumen que se entrega" (ahora con semana en curso parcial y semana anterior cerrada). Se confirma en la primera corrida de prueba.
 
+## Precios vigentes (referencia)
+
+Confirmados por Lizbany el 2026-10-06. **Claude los reafirma contigo en cada registro semanal**: si un valor cobrado no coincide con esta lista, pregunta antes de registrarlo.
+
+| Concepto | Valor |
+|---|---|
+| Consulta | $110.000 |
+| Primera consulta o diagnóstico | $90.000 |
+| Paquete de 4 consultas | $380.000 |
+| Plan con diagnóstico y paquete | $470.000 ($90.000 + $380.000) |
+
 ## Cómo está organizado el archivo
 
 | Hoja | Para qué sirve |
@@ -90,6 +101,7 @@ No tiene que ser perfecto: si algo falta o no queda claro, Claude pregunta.
 - **Fin de semana:** si Lizbany atiende sábados o domingos, esas sesiones entran en el envío del viernes siguiente y **actualizan** la semana a la que pertenecen (las fórmulas la recalculan). Por eso el resumen del viernes muestra la semana en curso como **parcial** y la anterior como **cerrada**.
 - **Abono ≠ pago total.** Se registra "Abono recibido" por el monto real; el saldo lo calcula el archivo.
 - **No se inventan datos.** Si falta fecha, valor, estado o forma de pago, Claude pregunta y espera la respuesta.
+- **Precios:** Claude contrasta cada valor cobrado con la lista de precios vigentes y, si no coincide (por ejemplo, un descuento o una tarifa distinta), pregunta antes de registrarlo.
 - **Posible duplicado** (misma fecha, paciente y valor que una fila existente): Claude pide confirmación antes de agregarla.
 - **Archivo ausente o abierto:** Claude no modifica nada y avisa.
 - **Semana sin movimientos:** se registra la semana en ceros con la nota "sin movimientos" y se entrega igual el resumen.
