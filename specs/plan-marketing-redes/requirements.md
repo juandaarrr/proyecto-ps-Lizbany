@@ -14,10 +14,11 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 - Las semanas se cuentan desde la **semana 1**, que empieza en la fecha de inicio que defina Lizbany (aún no fijada).
 - "Al menos la mitad" de las piezas del mes sobre el tema foco y el plazo de 24 horas para responder mensajes son valores propuestos por este documento, ajustables por Lizbany.
 - El material ya producido (reels finales, ideas de reels y carruseles, publicaciones) se reutiliza donde encaje con los temas de cada mes.
+- **Precios vigentes** (confirmados por Lizbany el 2026-10-06): consulta $110.000 COP; primera consulta o diagnóstico $90.000 COP; paquete de 4 consultas $380.000 COP. Un plan que incluye el diagnóstico y el paquete suma $470.000 COP. Los $100.000 y $350.000 de `PROYECTO MARCA PERSONAL.docx` están desactualizados.
 - La paleta (`#D9DD92`, `#776472`, `#DB9065`, `#646F4B`, `#71816D`) y las tipografías (Guía, Arsenal, Lustria) están definidas en `PROYECTO MARCA PERSONAL.docx`.
 - El control financiero usa como única base el archivo `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx` (hojas Pacientes, Pagos, Seguimiento y Resumen mensual). Contiene nombres de pacientes y pagos reales, por lo que es información sensible.
-- Claude no conoce por sí mismo las sesiones ni los pagos de la semana: Lizbany los informa (por el chat) o ya los registró en el archivo, y Claude los verifica, completa el registro y arma el resumen.
-- La semana financiera va de lunes a domingo, y el resumen se entrega el lunes siguiente (día ajustable por Lizbany).
+- Claude no conoce por sí mismo las sesiones ni los pagos: Lizbany los envía por el chat cada viernes y Claude los registra en el archivo; si no le queda claro en qué hoja o campo va un dato, pregunta antes de registrarlo.
+- La semana financiera va de lunes a domingo. Lizbany envía los datos cada viernes (lo ocurrido desde el viernes anterior); el resumen de ese viernes muestra la semana en curso de forma parcial (lunes a viernes) y la semana anterior ya cerrada. Si Lizbany atiende sábados o domingos, esas sesiones entran en el registro del viernes siguiente y actualizan su semana.
 - Cada ingreso se asigna a la semana de la fecha de su fila en Pagos; un pago posterior de una sesión anterior se registra como una fila nueva con la fecha en que se recibió (como ya se hizo con un abono registrado en septiembre).
 
 ## Glosario
@@ -118,7 +119,7 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 
 1. WHEN empiece la semana 1 THE SYSTEM SHALL tener una bio que diga a quién ayuda y qué enfoque usa, en una frase, e incluya el enlace a WhatsApp con el mensaje del Req. 6.2.
 2. WHEN empiece la semana 1 THE SYSTEM SHALL tener al menos 4 destacados de historias: cómo son las sesiones, precios, cómo agendar y preguntas frecuentes.
-3. THE SYSTEM SHALL mostrar en los destacados los precios vigentes: $100.000 COP por sesión y $350.000 COP por el paquete de 4 sesiones, con el aviso de modalidad virtual y duración de 60 minutos.
+3. THE SYSTEM SHALL mostrar en los destacados los precios vigentes: consulta de $110.000 COP, primera consulta o diagnóstico de $90.000 COP y paquete de 4 consultas de $380.000 COP, con el aviso de modalidad virtual y duración de 60 minutos.
 4. WHEN llega una conversación nueva por WhatsApp THE SYSTEM SHALL responder en máximo 24 horas con una plantilla breve y cálida que proponga un horario.
 5. THE SYSTEM SHALL no pedir ni aceptar datos clínicos por WhatsApp antes de la primera consulta; ahí solo se coordina el horario y la modalidad.
 6. IF alguien escribe en crisis (por ejemplo, expresa riesgo para su vida) THEN THE SYSTEM SHALL responder de forma breve y cálida con la línea de emergencia local y no abordar el caso por mensajes.
@@ -151,22 +152,24 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 
 ### Requisito 10: Control financiero semanal de las sesiones
 
-**Historia de usuario:** Como psicóloga, quiero que cada semana se actualice mi archivo de control de terapias y recibir un resumen de lo que ingresó por las sesiones, para llevar un seguimiento claro de mis entradas de capital.
+**Historia de usuario:** Como psicóloga, quiero enviar cada viernes la información de mis sesiones y pagos y ver actualizados mi archivo de control de terapias y un panel gráfico de lo que ingresó, para llevar un seguimiento claro de mis entradas de capital.
 
 #### Criterios de aceptación
 
-1. WHEN termine cada semana (de lunes a domingo) THE SYSTEM SHALL tomar como única base el archivo `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx` y registrar en la hoja Pagos las sesiones y los pagos de esa semana que Lizbany informe, con fecha, paciente, tipo de consulta, modalidad, valor cobrado, valor recibido, estado de pago y forma de pago.
-2. WHEN se registren sesiones o pagos THE SYSTEM SHALL actualizar en la hoja Seguimiento, para cada paciente afectado, las consultas realizadas y pendientes, la última y la próxima consulta, el total pagado y el saldo pendiente, y en la hoja Pacientes el estado cuando cambie.
+1. WHEN llegue el viernes de cada semana THE SYSTEM SHALL recibir por el chat las sesiones y pagos que Lizbany envíe desde el viernes anterior y registrarlos en `CUADRO CONTROL/Control_Terapias_Lizbany.xlsx`, que es la única base: cada sesión o pago en la hoja Pagos (fecha, paciente, tipo de consulta, modalidad, valor cobrado, valor recibido, estado de pago, forma de pago), los pacientes nuevos o sus cambios de estado en Pacientes, y el avance de los pacientes con plan en Seguimiento.
+2. WHEN se registren sesiones o pagos THE SYSTEM SHALL actualizar, para cada paciente afectado, las consultas realizadas y pendientes, la última y la próxima consulta, el total pagado y el saldo pendiente, y en Pacientes el estado cuando Lizbany informe un cambio.
 3. WHEN vaya a modificarse el archivo THE SYSTEM SHALL guardar antes una copia de respaldo con la fecha en el nombre y conservar al menos las 4 copias más recientes.
-4. IF falta o es dudoso un dato de una sesión o de un pago (fecha, valor, estado o forma de pago) THEN THE SYSTEM SHALL preguntar a Lizbany y no completarlo por su cuenta; un abono se registra como abono y nunca se asume como pago total.
+4. IF falta o es dudoso un dato (fecha, valor, estado, forma de pago, paciente o si corresponde a un plan), o el valor cobrado no coincide con los precios vigentes (consulta $110.000, diagnóstico $90.000, paquete de 4 $380.000), o no está claro en qué hoja o campo va, THEN THE SYSTEM SHALL hacer una pregunta de aclaración a Lizbany y no registrarlo hasta tener la respuesta; un abono se registra como abono y nunca se asume como pago total.
 5. IF un registro nuevo coincide con uno existente en fecha, paciente y valor THEN THE SYSTEM SHALL pedir confirmación antes de agregarlo.
-6. WHEN termine la actualización THE SYSTEM SHALL entregar un resumen financiero semanal con: sesiones realizadas (total y por tipo), cobros registrados, ingresos recibidos, monto pendiente por cobrar, ingresos por forma de pago, acumulado del mes y variación frente a la semana anterior.
-7. THE SYSTEM SHALL calcular los ingresos a partir de la columna "Valor recibido" y asignar cada ingreso a la semana de la fecha de su fila, sin contar como ingreso lo cobrado y no recibido.
-8. THE SYSTEM SHALL guardar cada resumen semanal como una fila en una hoja "Resumen semanal" del mismo archivo, de modo que quede el historial semana a semana.
+6. WHEN termine el registro THE SYSTEM SHALL entregar un resumen financiero de la semana en curso (parcial, de lunes a viernes) y de la semana anterior (cerrada, con su fin de semana), con: sesiones realizadas (total y por tipo), cobros registrados, ingresos recibidos, monto pendiente por cobrar, ingresos por forma de pago, acumulado del mes y variación frente a la semana anterior.
+7. THE SYSTEM SHALL calcular los ingresos a partir de la columna "Valor recibido", asignar cada ingreso a la semana (de lunes a domingo) de la fecha de su fila, y no contar como ingreso lo cobrado y no recibido.
+8. THE SYSTEM SHALL guardar cada semana como una fila en la hoja "Resumen semanal" del mismo archivo, calculada con fórmulas que se recalculan solas, de modo que la fila de una semana se actualiza si después llegan sesiones o pagos con fecha de esa semana (por ejemplo, los del fin de semana).
 9. IF la semana no tiene sesiones ni pagos THEN THE SYSTEM SHALL registrar la semana con valores en cero y la nota "sin movimientos", y entregar igualmente el resumen.
-10. WHEN termine de guardar THE SYSTEM SHALL verificar que las fórmulas y las listas desplegables del archivo siguen funcionando y que la suma de los ingresos semanales del mes coincide con "Ingresos recibidos en el mes" de la hoja Resumen mensual; IF la verificación falla THEN THE SYSTEM SHALL restaurar la copia de respaldo y avisar a Lizbany.
+10. WHEN termine de guardar THE SYSTEM SHALL verificar que las fórmulas, las listas desplegables y los gráficos del archivo siguen funcionando y que la suma de los ingresos semanales del mes coincide con "Ingresos recibidos en el mes" de la hoja Resumen mensual; IF la verificación falla THEN THE SYSTEM SHALL restaurar la copia de respaldo y avisar a Lizbany.
 11. IF el archivo no se encuentra o está abierto en otro programa THEN THE SYSTEM SHALL no modificarlo y avisar a Lizbany.
-12. THE SYSTEM SHALL mostrar en el resumen los saldos pendientes solo con el identificador del paciente (P001, P002...), no con su nombre, y no copiar datos de pacientes ni de pagos al repositorio de git, a la hoja de seguimiento de marketing ni a los archivos de `marketing/`.
+12. THE SYSTEM SHALL mostrar en el resumen entregado por el chat los saldos pendientes solo con el identificador del paciente (P001, P002...), no con su nombre, y no copiar datos de pacientes ni de pagos al repositorio de git, a la hoja de seguimiento de marketing ni a los archivos de `marketing/`.
+13. THE SYSTEM SHALL mantener cada hoja con su propósito: Pacientes (pacientes existentes, fecha de inicio, si están activos —Lizbany informa cuando uno deja de serlo— y notas, como si adquirieron o no un plan), Pagos (registro semana a semana de sesiones y pagos), Seguimiento (solo pacientes con plan: cuánto debe cada uno y si ya pagó todo) y Resumen mensual (ingresos, cobros —lo que debió entrar— y saldos pendientes por paciente); y calcular el saldo de un paciente sin plan como lo cobrado menos lo recibido.
+14. THE SYSTEM SHALL mantener una hoja "Panel" en el mismo archivo, con gráficos que se actualizan solos al registrar datos y que muestran: ingresos recibidos por semana (últimas 12 semanas), ingresos frente a cobros por mes, saldos pendientes por paciente (identificados por ID), ingresos por forma de pago y sesiones por tipo.
 
 ## Requisitos no funcionales
 
@@ -194,6 +197,5 @@ Plan de 12 semanas para que Ps. Lizbany Arango, psicóloga clínica, consiga pac
 - ¿Quién responde los mensajes de WhatsApp, y el plazo de 24 horas es realista?
 - ¿Cuál es el tope de gasto para la pauta pequeña (Req. 9.2)?
 - ¿Qué dice la revisión con el Colegio Colombiano de Psicólogos sobre la publicidad permitida (Req. 5.6)?
-- ¿Qué día y de qué forma entrega Lizbany los datos de la semana (por el chat, o ya registrados en el archivo)? ¿El lunes es buen día para el resumen?
-- Los precios del archivo de control ($90.000 la consulta diagnóstica, $110.000 la individual, $470.000 un plan mensual de 4 consultas) no coinciden con los de `PROYECTO MARCA PERSONAL.docx` ($100.000 por sesión y $350.000 por 4 sesiones), que usa el Req. 7.3 para los destacados. ¿Cuáles son los precios vigentes?
-- El archivo tiene fórmulas con datos fijos que afectan el resumen (saldo negativo de un paciente en Seguimiento, el nombre de un paciente y el mes "septiembre" escritos a mano en Resumen mensual). ¿Lizbany autoriza corregirlos?
+- ¿Lizbany atiende sábados o domingos? Si es así, esas sesiones se registran el viernes siguiente y actualizan la semana anterior.
+- El archivo tiene fórmulas con datos fijos que afectan el resumen (la fórmula del saldo en Seguimiento da negativo para pacientes sin plan, el nombre de un paciente y el mes "septiembre" escritos a mano en Resumen mensual). ¿Lizbany autoriza corregirlos?
