@@ -26,7 +26,11 @@ function Parse-Fecha($s) {
     try { return [datetime]::ParseExact([string]$s, 'yyyy-MM-dd', $inv) } catch { return $null }
 }
 
-if (-not (Test-Path $Path)) { 'ERROR|El archivo no existe: ' + $Path; exit 3 }
+if (-not (Test-Path -LiteralPath $Path)) { 'ERROR|El archivo no existe: ' + $Path + ' (ejecuta el comando desde la carpeta del proyecto, donde esta la carpeta CUADRO CONTROL)'; exit 3 }
+if (-not (Test-Path -LiteralPath $Datos)) { 'ERROR|El archivo de datos no existe: ' + $Datos; exit 3 }
+# Excel resuelve las rutas relativas desde su propia carpeta, no desde la del proyecto: usar rutas completas
+$Path = (Resolve-Path -LiteralPath $Path).Path
+$Datos = (Resolve-Path -LiteralPath $Datos).Path
 try { $fs = [System.IO.File]::Open($Path, 'Open', 'ReadWrite', 'None'); $fs.Close() }
 catch { 'ERROR|El archivo esta abierto en otro programa o bloqueado. Pide a Lizbany que cierre Excel. No se modifico nada.'; exit 3 }
 

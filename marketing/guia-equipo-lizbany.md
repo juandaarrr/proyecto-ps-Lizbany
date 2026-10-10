@@ -52,7 +52,7 @@ pip install openpyxl
 
 ## Primera vez: ponerlo al día
 
-El último registro es del **15/09/2026**. Liz debe ponerlo al día **hasta el domingo 04/10/2026**, y desde el **viernes 09/10/2026** continúa cada viernes.
+El último registro es del **15/09/2026**. Liz debe ponerlo al día **hasta el domingo 04/10/2026**. Como el viernes 09/10/2026 ya pasó, conviene incluir también las sesiones y pagos **del 05 al 09/10**, y desde ahí continúa cada viernes (el siguiente es el 16/10/2026).
 
 1. Cerrar el Excel (Claude no puede escribir si está abierto).
 2. Abrir el proyecto en Claude y escribir, con sus palabras, algo como:
@@ -65,6 +65,16 @@ El último registro es del **15/09/2026**. Liz debe ponerlo al día **hasta el d
 ## Cada viernes
 
 Cerrar el Excel, abrir el proyecto en Claude, enviar lo ocurrido desde el viernes anterior y recibir el resumen.
+
+## Actualizar el proyecto cuando haya mejoras
+
+De vez en cuando hay correcciones al programa. Para recibirlas, en una terminal dentro de `proyecto-ps-Lizbany`:
+
+```bash
+git pull
+```
+
+Esto **no toca el Excel** (la carpeta `CUADRO CONTROL` no forma parte de GitHub). Conviene hacerlo antes de la primera sesión: el 10/10/2026 se corrigió un error con las rutas de los comandos.
 
 ## Si algo falla
 

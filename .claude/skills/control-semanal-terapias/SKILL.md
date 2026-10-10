@@ -91,7 +91,7 @@ Habla en español, con tono cálido y sencillo: Lizbany no es técnica.
 
 La spec cerró la tarea 27 sin una corrida con datos reales porque esos datos los tiene Lizbany. La **primera vez** que ella abra el chat:
 
-1. Hay que registrar **todo desde el 16/09/2026 (el último registro es del 15/09) hasta el domingo 04/10/2026.** Pídele esas sesiones y pagos, por tandas si son muchos.
+1. Hay que registrar **todo desde el 16/09/2026 (el último registro es del 15/09) hasta el domingo 04/10/2026.** Pídele esas sesiones y pagos, por tandas si son muchos. Si ya pasó el viernes 09/10/2026, incluye también la semana del 05 al 09/10 (el ciclo normal ya habría tocado ese viernes); el siguiente viernes es el 16/10/2026. Ejecuta los comandos **desde la carpeta del proyecto** (la que contiene `CUADRO CONTROL/`).
 2. Revisa en Seguimiento las "próximas consultas" ya vencidas y actualiza consultas realizadas con sus respuestas.
 3. Al entregar el primer resumen, **pídele que confirme el formato** (semana anterior cerrada y semana en curso parcial, saldos por ID). Es la casilla pendiente del procedimiento.
 4. Pregúntale qué mes quiere ver en la hoja **Resumen mensual** (la celda B3 muestra hoy septiembre): ese cambio lo decide ella.
